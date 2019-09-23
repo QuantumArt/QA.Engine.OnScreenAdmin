@@ -80,8 +80,8 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
             services.AddScoped<IItemDefinitionRepository, ItemDefinitionRepository>();
             services.AddScoped<IAbTestRepository, AbTestRepository>();
 
-            var qpUrlResolverCacheSettings = new QpSchemeCacheSettings { CachePeriod = new TimeSpan(0, 1, 0) };
-            services.AddSingleton(typeof(QpSchemeCacheSettings), qpUrlResolverCacheSettings);
+            var qpUrlResolverCacheSettings = new QpSiteStructureCacheSettings { QpSchemeCachePeriod = new TimeSpan(0, 1, 0) };
+            services.AddSingleton(typeof(QpSiteStructureCacheSettings), qpUrlResolverCacheSettings);
             services.AddScoped<IQpUrlResolver, QpUrlResolver>();
             services.AddAuthentication(options =>
             {
