@@ -1,5 +1,5 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build-env
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build-env
+LABEL stage=intermediate
 
 RUN apt-get update && \
     apt-get install unzip && \
@@ -8,21 +8,27 @@ RUN apt-get update && \
     wget -qO- https://deb.nodesource.com/setup_8.x | bash - && \
     apt-get install -y build-essential nodejs
 
-COPY .nuget .
-COPY projectstructure.zip .
+WORKDIR /src
+COPY ["QA.Engine.OnScreenAdmin.Web/QA.Engine.OnScreenAdmin.Web.csproj", "QA.Engine.OnScreenAdmin.Web/"]
+COPY nuget.config .
+RUN dotnet restore "QA.Engine.OnScreenAdmin.Web/QA.Engine.OnScreenAdmin.Web.csproj"
 
-RUN unzip projectstructure.zip && dotnet restore --configfile NuGet.config --verbosity n -r linux-x64
+WORKDIR /src/QA.Engine.OnScreenAdmin.Web
+COPY QA.Engine.OnScreenAdmin.Web/package.json .
+COPY QA.Engine.OnScreenAdmin.Web/package-lock.json .
+RUN npm ci
 
-WORKDIR /app/QA.DotNetCore.OnScreenAdmin.Web
-COPY QA.DotNetCore.OnScreenAdmin.Web/package.json ./
-RUN npm install
-WORKDIR /app
-COPY . ./
+WORKDIR /src
+COPY . .
 
-RUN dotnet publish QA.DotNetCore.OnScreenAdmin.Web/QA.DotNetCore.OnScreenAdmin.Web.csproj -c Release -o /app/out
+WORKDIR /src/QA.Engine.OnScreenAdmin.Web
+RUN dotnet build "QA.Engine.OnScreenAdmin.Web.csproj" -c Release
+RUN dotnet publish "QA.Engine.OnScreenAdmin.Web.csproj" -c Release -o /app/out
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+ARG SERVICE_VERSION=0.0.0
+ENV ServiceVersion=${SERVICE_VERSION}
 WORKDIR /app
 COPY --from=build-env /app/out .
 EXPOSE 80
-ENTRYPOINT ["dotnet", "QA.DotNetCore.OnScreenAdmin.Web.dll"]
+ENTRYPOINT ["dotnet", "QA.Engine.OnScreenAdmin.Web.dll"]
