@@ -40,6 +40,10 @@ const zoneProperties = PropTypes.shape({
   componentCoords,
 });
 
+const articleProperties = PropTypes.shape({
+  title: PropTypes.string
+});
+
 const styles = theme => ({
   componentAvatar: {
     borderRadius: 0,
@@ -100,7 +104,7 @@ class ComponentItem extends Component {
     onScreenId: PropTypes.string.isRequired,
     isOpened: PropTypes.bool,
     selectedComponentId: PropTypes.string.isRequired,
-    properties: PropTypes.oneOfType([widgetProperties, zoneProperties]).isRequired,
+    properties: PropTypes.oneOfType([widgetProperties, zoneProperties, articleProperties]).isRequired,
     children: PropTypes.arrayOf(PropTypes.object).isRequired,
     classes: PropTypes.object.isRequired,
     itemLevel: PropTypes.number.isRequired,

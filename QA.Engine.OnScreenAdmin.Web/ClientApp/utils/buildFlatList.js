@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { getSubtreeState } from './componentTreeStateStorage';
+import {ELEMENT_TYPE} from "../constants/elementTypes";
 
 /** @namespace window.startPageId */
 
@@ -7,11 +8,29 @@ const startZonePrefix = 'start zone ';
 const endZonePrefix = 'end zone ';
 const startWidgetPrefix = 'start widget ';
 const endWidgetPrefix = 'end widget ';
+const startArticlePrefix = 'start article ';
+const endArticlePrefix = 'end article ';
 
 const isZone = val => val.startsWith(startZonePrefix);
 const endZone = val => val.startsWith(endZonePrefix);
 const isWidget = val => val.startsWith(startWidgetPrefix);
 const endWidget = val => val.startsWith(endWidgetPrefix);
+
+const isArticle = val => val.startsWith(startArticlePrefix);
+const endArticle = val => val.startsWith(endArticlePrefix);
+
+const isElement = val => isZone(val) || isWidget(val) || isArticle(val);
+
+const getElementType = val => {
+  if(isZone(val)){
+    return ELEMENT_TYPE.ZONE;
+  } else if (isWidget(val)){
+    return ELEMENT_TYPE.WIDGET;
+  } else if (isArticle(val)) {
+    return ELEMENT_TYPE.ARTICLE
+  }
+  return ELEMENT_TYPE.UNKNOWN;
+};
 
 /**
  * Parses comment string for backend data
@@ -31,10 +50,19 @@ const endWidget = val => val.startsWith(endWidgetPrefix);
 const mapProperties = (val) => {
   const pair = val.match(/(\w+)='([^']+)'/g);
   const initObj = {};
-  if (isWidget(val)) {
-    initObj.widgetId = Number(val.match(/(\d+)(?!(widget))/g)[0]);
-  } else {
-    initObj.zoneName = val.match(/zone (\w+)/g)[0].replace('zone ', '');
+  const type = getElementType(val);
+  switch(type) {
+    case ELEMENT_TYPE.WIDGET:
+      initObj.widgetId = Number(val.match(/(\d+)(?!(widget))/g)[0]);
+      break;
+    case ELEMENT_TYPE.ZONE:
+      initObj.zoneName = val.match(/zone (\w+)/g)[0].replace('zone ', '');
+      break;
+    case ELEMENT_TYPE.ARTICLE:
+      initObj.articleId = Number(val.match(/(\d+)(?!(article))/g)[0]);
+      break;
+    default:
+      break;
   }
 
   return _.reduce(pair, (prev, cur) => {
@@ -57,7 +85,7 @@ const isOpened = (onScreenId) => {
 
 /**
  * Constructs list element using comment's data.
- * @param {('widget'|'zone')} type
+ * @param {('widget'|'zone'|'article')} type
  * @param {string} val - string, containing all entitie's properties
  * @param {string} onScreenId - unique component id
  * @param {string} parentOnScreenId
@@ -66,7 +94,7 @@ const isOpened = (onScreenId) => {
  *  isSelected: boolean,
  *  isOpened: boolean,
  *  isDisabled: boolean,
- *  type: ('widget'|'zone'),
+ *  type: ('widget'|'zone'|'article'),
  *  nestLevel: number,
  *  onScreenId: string,
  *  parentOnScreenId: string,
@@ -116,7 +144,21 @@ function getCords(node, el) {
     }
     return findFirstSubNode(startNode.nextSibling);
   };
-  const endNodeValue = el.type === 'widget' ? `end widget ${el.properties.widgetId}` : `end zone ${el.properties.zoneName}`;
+  let endNodeValue = '';
+  switch(el.type) {
+    case ELEMENT_TYPE.WIDGET:
+      endNodeValue = `end widget ${el.properties.widgetId}`;
+      break;
+    case ELEMENT_TYPE.ZONE:
+      endNodeValue = `end zone ${el.properties.zoneName}`;
+      break;
+    case ELEMENT_TYPE.ARTICLE:
+      endNodeValue = `end article ${el.properties.articleId}`;
+      break;
+    default:
+      break;
+
+  }
 
   const findZoneLastSubNode = (startNode) => {
     if (startNode === null) {
@@ -199,6 +241,8 @@ function getCords(node, el) {
   return componentCoords;
 }
 
+
+
 export default function buildFlatList() {
   const list = [];
   const hashMap = {};
@@ -206,12 +250,12 @@ export default function buildFlatList() {
 
   const mapEl = (node) => {
     const val = node.nodeValue;
-    if (isZone(val) || isWidget(val)) {
+    if (isElement(val)) {
       let parentOnScreenId = null;
       if (stack.length !== 0) {
         parentOnScreenId = stack[stack.length - 1].onScreenId;
       }
-      const type = isZone(val) ? 'zone' : 'widget';
+      const type = getElementType(val);
       const onScreenId = _.uniqueId(type);
       const el = constructElement(type, val, onScreenId, parentOnScreenId, stack.length + 1);
       hashMap[el.onScreenId] = el;
@@ -226,7 +270,7 @@ export default function buildFlatList() {
       }
       el.properties.componentCoords = getCords(node, el);
       stack.push(el);
-    } else if (endZone(val) || endWidget(val)) {
+    } else if (endZone(val) || endWidget(val) || endArticle(val)) {
       list.push(stack.pop());
     }
   };
@@ -236,5 +280,6 @@ export default function buildFlatList() {
   while (curNode = iterator.nextNode()) {
     mapEl(curNode);
   }
+  console.log('flatList', list);
   return list;
 }
