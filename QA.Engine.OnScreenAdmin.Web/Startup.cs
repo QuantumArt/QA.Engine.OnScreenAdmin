@@ -19,8 +19,8 @@ using Quantumart.QPublishing.Authentication;
 using Quantumart.QPublishing.Database;
 using System;
 using System.Collections.Generic;
+using Microsoft.OpenApi.Models;
 using QP.ConfigurationService.Models;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace QA.DotNetCore.OnScreenAdmin.Web
 {
@@ -28,6 +28,7 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
     {
         const string SWAGGER_VERSION = "v1";
         const string SWAGGER_TITLE = "OnScreen Web Api";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -42,7 +43,7 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
 
             services.AddSwaggerGen(o =>
             {
-                o.SwaggerDoc(SWAGGER_VERSION, new Info
+                o.SwaggerDoc(SWAGGER_VERSION, new OpenApiInfo
                 {
                     Title = SWAGGER_TITLE,
                     Version = SWAGGER_VERSION
@@ -69,6 +70,7 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                 {
                     throw new Exception("Customer-Code header must be provided.");
                 }
+
                 var config = Configuration.GetSection("ConfigurationService").Get<ConfigurationServiceConfig>();
                 DBConnector.ConfigServiceUrl = config.Url;
                 DBConnector.ConfigServiceToken = config.Token;
@@ -80,7 +82,8 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
             services.AddScoped<IItemDefinitionRepository, ItemDefinitionRepository>();
             services.AddScoped<IAbTestRepository, AbTestRepository>();
 
-            var qpUrlResolverCacheSettings = new QpSiteStructureCacheSettings { QpSchemeCachePeriod = new TimeSpan(0, 1, 0) };
+            var qpUrlResolverCacheSettings = new QpSiteStructureCacheSettings
+                {QpSchemeCachePeriod = new TimeSpan(0, 1, 0)};
             services.AddSingleton(typeof(QpSiteStructureCacheSettings), qpUrlResolverCacheSettings);
             services.AddScoped<IQpUrlResolver, QpUrlResolver>();
             services.AddAuthentication(options =>
@@ -99,13 +102,14 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                     {
                         new QpUserRequirement()
                     },
-                    new[] { QpAuthDefaults.AuthenticationScheme });
+                    new[] {QpAuthDefaults.AuthenticationScheme});
             });
 
-            services.AddCacheTagServices(options => options.InvalidateByMiddleware(@"^(?!\/api\/).+$"));//инвалидировать только если запрос начинается с /api/
+            services.AddCacheTagServices(options =>
+                options.InvalidateByMiddleware(
+                    @"^(?!\/api\/).+$")); //инвалидировать только если запрос начинается с /api/
 
             services.AddHealthChecks();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -136,10 +140,7 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
 
             app.UseAuthentication();
 
-            app.UseCacheTagsInvalidation(trackers =>
-            {
-                trackers.RegisterScoped<QpContentCacheTracker>();
-            });
+            app.UseCacheTagsInvalidation(trackers => { trackers.RegisterScoped<QpContentCacheTracker>(); });
 
             app.UseMvc(routes =>
             {
@@ -155,7 +156,6 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
             {
                 o.SwaggerEndpoint("/swagger/v1/swagger.json", $"{SWAGGER_TITLE} {SWAGGER_VERSION}");
             });
-
         }
     }
 }

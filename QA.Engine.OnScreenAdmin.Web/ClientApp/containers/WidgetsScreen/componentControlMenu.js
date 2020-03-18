@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { editWidget, moveWidget, } from 'actions/componentControlMenuActions';
+import { editArticle, editWidget, moveWidget } from 'actions/componentControlMenuActions';
 import { WIDGET_CREATION_MODE } from 'constants/widgetCreation';
 import { beginWidgetCreation } from 'actions/widgetCreation/actions';
 import ComponentControlMenu from 'Components/WidgetsScreen/ComponentTreeScreen/ComponentControlMenu';
@@ -39,6 +39,9 @@ const mapDispatchToProps = dispatch => ({
   onMoveWidget: (id) => {
     dispatch(moveWidget(id));
   },
+  onEditArticle: (id) => {
+    dispatch(editArticle(id));
+  }
 });
 
 const ComponentControlMenuContainer = connect(

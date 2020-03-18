@@ -1,8 +1,9 @@
-import { 
+import {
   EDIT_WIDGET_ACTIONS,
   ADD_WIDGET_ACTIONS,
   QP_FORM_ACTIONS,
   EDIT_PAGE_ACTIONS,
+  EDIT_ARTICLE_ACTIONS,
 } from 'actions/actionTypes';
 
 
@@ -21,6 +22,10 @@ const initialState = {
     onScreenId: null,
     targetZoneId: null,
   },
+  editArticle: {
+    isActive: false,
+    onScreenId: null,
+  },
   needReload: false,
   qpFormOpened: false,
 };
@@ -32,6 +37,15 @@ export default function articleManagementReducer(state = initialState, action) {
         ...state,
         editWidget: {
           ...state.editWidget,
+          isActive: true,
+          onScreenId: action.onScreenId,
+        },
+      };
+    case EDIT_ARTICLE_ACTIONS.EDIT_ARTICLE:
+      return {
+        ...state,
+        editArticle: {
+          ...state.editArticle,
           isActive: true,
           onScreenId: action.onScreenId,
         },

@@ -10,12 +10,14 @@ import watchAbTests from './abTestsSagas';
 import watchWidgetCreationWizard from './widgetCreationWizardSagas';
 import watchWidgetScreen from './widgetScreenSagas';
 import watchEditPage from './editPageSagas';
+import watchEditArticle from './editArticleSagas';
 
 
 export default function* rootSaga() {
   yield all([
     watchSubtreeToggle(),
     watchEditWidgetSaga(),
+    watchEditArticle(),
     // watchAddWidgetSaga(),
     watchQpForm(),
     watchMetaInfo(),

@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui-icons/MoreVert';
+import { ELEMENT_TYPE } from "constants/elementTypes";
 
 const styles = theme => ({
   menuItem: {
@@ -27,25 +28,31 @@ class ComponentControlMenu extends Component {
     const { onEditWidget, onScreenId } = this.props;
     this.handleRequestClose();
     onEditWidget(onScreenId);
-  }
+  };
 
   handleAddWidgetToZone = () => {
     const { onAddWidgetToZone, onScreenId, zoneName } = this.props;
     this.handleRequestClose();
     onAddWidgetToZone(onScreenId, zoneName);
-  }
+  };
 
   handleAddChildWidget = () => {
     const { onAddChildWidget, onScreenId } = this.props;
     this.handleRequestClose();
     onAddChildWidget(onScreenId);
-  }
+  };
 
   handleMoveWidget = () => {
     const { onMoveWidget, onScreenId } = this.props;
     this.handleRequestClose();
     onMoveWidget(onScreenId);
-  }
+  };
+
+  handleEditArticle = () => {
+    const { onEditArticle, onScreenId } = this.props;
+    this.handleRequestClose();
+    onEditArticle(onScreenId);
+  };
 
   renderZoneMenu = () => {
     const { classes, isIframe } = this.props;
@@ -84,7 +91,7 @@ class ComponentControlMenu extends Component {
         </Menu>
       </Fragment>
     );
-  }
+  };
 
   renderWidgetMenu = () => {
     const { classes, isIframe } = this.props;
@@ -132,19 +139,54 @@ class ComponentControlMenu extends Component {
         </Menu>
       </Fragment>
     );
-  }
+  };
+
+  renderArticleMenu = () => {
+    const { classes, isIframe } = this.props;
+    const open = Boolean(this.state.anchorEl);
+    return (
+      <Fragment>
+        <IconButton
+          aria-label="More"
+          aria-owns={open ? 'long-menu' : null}
+          aria-haspopup="true"
+          onClick={this.handleClick}
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          id="long-menu"
+          anchorEl={this.state.anchorEl}
+          open={open}
+          onClose={this.handleRequestClose}
+        >
+          <MenuItem
+            key="editArticle"
+            onClick={this.handleEditArticle}
+            classes={{ root: classes.menuItem }}
+            disabled={!isIframe}
+          >
+            Edit
+          </MenuItem>
+        </Menu>
+      </Fragment>
+    );
+  };
 
   render() {
     const {
       type,
     } = this.props;
-
-    const isWidget = type !== 'zone';
-    if (!isWidget) {
-      return this.renderZoneMenu();
+    switch(type) {
+      case ELEMENT_TYPE.ZONE:
+        return this.renderZoneMenu();
+      case ELEMENT_TYPE.WIDGET:
+        return this.renderWidgetMenu();
+      case ELEMENT_TYPE.ARTICLE:
+        return this.renderArticleMenu();
+      default:
+        return null;
     }
-
-    return this.renderWidgetMenu();
   }
 }
 
@@ -153,6 +195,7 @@ ComponentControlMenu.propTypes = {
   onAddWidgetToZone: PropTypes.func.isRequired,
   onAddChildWidget: PropTypes.func.isRequired,
   onMoveWidget: PropTypes.func.isRequired,
+  onEditArticle: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
   zoneName: PropTypes.string.isRequired,
   onScreenId: PropTypes.string.isRequired,

@@ -280,6 +280,5 @@ export default function buildFlatList() {
   while (curNode = iterator.nextNode()) {
     mapEl(curNode);
   }
-  console.log('flatList', list);
   return list;
 }

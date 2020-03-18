@@ -1,22 +1,24 @@
 import _ from 'lodash';
-import React, { Component, Fragment } from 'react';
+import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import scrollToElement from 'scroll-to-element';
-import { withStyles } from 'material-ui/styles';
-import { ListItem, ListItemSecondaryAction, ListItemText, } from 'material-ui/List';
+import {withStyles} from 'material-ui/styles';
+import {ListItem, ListItemSecondaryAction, ListItemText,} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import Tooltip from 'material-ui/Tooltip';
 import ExpandLess from 'material-ui-icons/ExpandLess';
 import ExpandMore from 'material-ui-icons/ExpandMore';
 import Widgets from 'material-ui-icons/Widgets';
-import NewWidget from 'material-ui-icons/NewReleases';
+import Unpublished from 'material-ui-icons/NewReleases';
 import IconButton from 'material-ui/IconButton';
 import Icon from 'material-ui/Icon';
 import ZoneIcon from 'Components/Icons/Zone';
+import ArticleIcon from 'material-ui-icons/Description';
 import Collapse from 'material-ui/transitions/Collapse';
-import { deepPurple, red } from 'material-ui/colors';
+import {deepPurple, red} from 'material-ui/colors';
 import ComponentControlMenu from 'containers/WidgetsScreen/componentControlMenu';
-import { MAX_COMPONENT_PRIMARY_TEXT_LENGTH } from 'constants/general';
+import {MAX_COMPONENT_PRIMARY_TEXT_LENGTH} from 'constants/general';
+import { ELEMENT_TYPE } from "constants/elementTypes";
 
 const componentCoords = PropTypes.shape({
   top: PropTypes.number,
@@ -41,7 +43,7 @@ const zoneProperties = PropTypes.shape({
 });
 
 const articleProperties = PropTypes.shape({
-  title: PropTypes.string
+  title: PropTypes.string,
 });
 
 const styles = theme => ({
@@ -58,7 +60,7 @@ const styles = theme => ({
     width: theme.typography.pxToRem(30),
     height: theme.typography.pxToRem(30),
   },
-  newWidgetOverlay: {
+  unpublishedOverlay: {
     width: theme.typography.pxToRem(25),
     height: theme.typography.pxToRem(25),
     marginLeft: '-10px',
@@ -119,7 +121,7 @@ class ComponentItem extends Component {
   };
 
   handleToggleClick = () => {
-    const { isMovingWidget, onScreenId, onToggleComponent, onMovingWidgetSelectTargetZone } = this.props;
+    const {isMovingWidget, onScreenId, onToggleComponent, onMovingWidgetSelectTargetZone} = this.props;
 
     if (isMovingWidget) {
       onMovingWidgetSelectTargetZone(onScreenId);
@@ -170,9 +172,22 @@ class ComponentItem extends Component {
   );
 
   renderListItemTextWrapper = (type, properties, isSelected, classes) => {
-    const primaryText = type === 'zone'
-      ? properties.zoneName
-      : `#${properties.widgetId} ${properties.title}`;
+
+    let primaryText = '';
+    switch (type) {
+      case ELEMENT_TYPE.ZONE:
+        primaryText = properties.zoneName;
+        break;
+      case ELEMENT_TYPE.WIDGET:
+        primaryText = `#${properties.widgetId} ${properties.title}`;
+        break;
+      case ELEMENT_TYPE.ARTICLE:
+        primaryText = `#${properties.articleId} ${properties.title}`;
+        break;
+      default:
+        break;
+    }
+
     const isPrimaryTextTruncated = primaryText.length > MAX_COMPONENT_PRIMARY_TEXT_LENGTH;
     const textToRender = isPrimaryTextTruncated
       ? `${primaryText.substring(0, MAX_COMPONENT_PRIMARY_TEXT_LENGTH)}…`
@@ -181,7 +196,7 @@ class ComponentItem extends Component {
     return (
       <Tooltip
         title={isPrimaryTextTruncated ? primaryText : ''}
-        classes={{ tooltip: classes.tooltip }}
+        classes={{tooltip: classes.tooltip}}
         disableTriggerFocus={!isPrimaryTextTruncated}
         disableTriggerHover={!isPrimaryTextTruncated}
         disableTriggerTouch={!isPrimaryTextTruncated}
@@ -192,7 +207,7 @@ class ComponentItem extends Component {
   };
 
   renderContextMenu = (isSelected) => {
-    const { isMovingWidget } = this.props;
+    const {isMovingWidget} = this.props;
     if (!isSelected || isMovingWidget) {
       return null;
     }
@@ -231,9 +246,9 @@ class ComponentItem extends Component {
     return (
       <IconButton
         onClick={this.handleSubtreeClick}
-        classes={{ root: classes.expandNodeRoot }}
+        classes={{root: classes.expandNodeRoot}}
       >
-        <Icon classes={{ root: classes.expandNodeIcon }}>
+        <Icon classes={{root: classes.expandNodeIcon}}>
           {isOpened ? <ExpandLess/> : <ExpandMore/>}
         </Icon>
       </IconButton>
@@ -242,24 +257,33 @@ class ComponentItem extends Component {
 
   renderListItemIcon = (type, properties, isSelected, classes) => {
     const className = isSelected ? classes.componentAvatarSelected : classes.componentAvatar;
-    if (type === 'zone') {
-      return (
-        <ZoneIcon className={className}/>
-      );
-    }
 
-    if (properties.widgetTypeIconSrc) {
-      return (
-        <Fragment>
-          {properties.widgetTypeIconSrc
-            ? (<Avatar className={className} src={properties.widgetTypeIconSrc}/>)
-            : (<Avatar className={className}><Widgets/></Avatar>)
-          }
-          {!properties.published && (<NewWidget className={classes.newWidgetOverlay}/>)}
-        </Fragment>
-      );
+    switch (type) {
+      case ELEMENT_TYPE.ZONE:
+        return (
+          <ZoneIcon className={className}/>
+        );
+      case ELEMENT_TYPE.WIDGET:
+        if (properties.widgetTypeIconSrc) {
+          return (
+            <Fragment>
+              {properties.widgetTypeIconSrc
+                ? (<Avatar className={className} src={properties.widgetTypeIconSrc}/>)
+                : (<Avatar className={className}><Widgets/></Avatar>)
+              }
+              {!properties.published && (<Unpublished className={classes.unpublishedOverlay}/>)}
+            </Fragment>
+          );
+        }
+        return (<Avatar className={className}><Widgets/></Avatar>);
+      case ELEMENT_TYPE.ARTICLE:
+        return (<Fragment>
+          <Avatar className={className}><ArticleIcon className={className}/></Avatar>
+          {!properties.published && (<Unpublished className={classes.unpublishedOverlay}/>)}
+        </Fragment>);
+      default:
+        return null;
     }
-    return (<Avatar className={className}><Widgets/></Avatar>);
   };
 
   renderListItem = (subtree, hasChildWidgets) => {
@@ -284,7 +308,7 @@ class ComponentItem extends Component {
           root: classes.listItem,
           secondaryAction: classes.listItemSecondaryAction,
         }}
-        style={{ paddingLeft: itemLevel > 1 ? `${itemLevel * 1}em` : '16px' }}
+        style={{paddingLeft: itemLevel > 1 ? `${itemLevel * 1}em` : '16px'}}
         onClick={this.handleToggleClick}
         button
       >

@@ -21,6 +21,15 @@ export const editWidget = (widgetId, callback, abstractItemMetaInfo) => {
   showQPForm(options);
 };
 
+export const editArticle = (articleId, callback, contentId) => {
+  const options = {
+    id: articleId,
+    contentId: contentId,
+    callback,
+  };
+  showQPForm(options);
+};
+
 export const editPage = (currentPageId, callback, abstractItemMetaInfo) => {
   const options = {
     id: currentPageId,
