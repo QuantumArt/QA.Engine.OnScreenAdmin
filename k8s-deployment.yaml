@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wp-onscreen
+  namespace: widget-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wp-onscreen
+  template:
+    metadata:
+      labels:
+        app: wp-onscreen
+    spec:
+      containers:
+      - image: spbdocker03:5000/widget-platform/onscreen:1.0.0.0
+        name: wp-onscreen
+        ports:
+        - containerPort: 80
+        env:
+        - name: ConfigurationServiceUrl
+          valueFrom:
+            configMapKeyRef:
+              name: qp-config
+              key: CONFIGURATION_SERVICE_HOST
+        - name: ConfigurationServiceToken
+          valueFrom:
+            configMapKeyRef:
+              name: qp-config
+              key: CONFIGURATION_SERVICE_TOKEN          
+      volumeMounts:
+      - mountPath: /etc/localtime
+        name: tz-config
+      resources:
+        limits:
+          memory: "256Mi"
+    volumes:
+    - name: tz-config
+      hostPath:
+        path: /usr/share/zoneinfo/Europe/Moscow
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wp-onscreen
+  namespace: widget-platform
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: wp-onscreen                   
