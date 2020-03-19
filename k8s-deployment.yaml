@@ -14,7 +14,7 @@ spec:
         app: wp-onscreen
     spec:
       containers:
-      - image: spbdocker03:5000/widget-platform/onscreen:1.0.0.0
+      - image: spbdocker03:5000/widget-platform/onscreen:||version||
         name: wp-onscreen
         ports:
         - containerPort: 80
