@@ -16,6 +16,7 @@ const WebpackNotifierPlugin = require('webpack-notifier');
 console.log(process.env.NODE_ENV);
 
 module.exports = {
+
   entry: {
     main: [
       'babel-polyfill',

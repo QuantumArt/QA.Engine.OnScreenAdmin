@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import _ from 'lodash';
 import buildTree from 'utils/buildTreeNew';
 import { allAvailableWidgetsSelector } from './availableWidgets';
+import buildTreeData from "../utils/buildTreeData";
 
 
 const getComponentTree = state => buildTree(state.componentTree.components); // TODO: fix
@@ -108,8 +109,8 @@ export const filteredComponentTree = createSelector(
         return result;
       }
       const result = _.includes(_.toLower(c.properties.alias), searchText)
-          || _.includes(_.toLower(c.properties.title), searchText)
-          || _.includes(_.toLower(c.properties.widgetId), searchText);
+        || _.includes(_.toLower(c.properties.title), searchText)
+        || _.includes(_.toLower(c.properties.widgetId), searchText);
       if (result) {
         searchResultIds.push(c.onScreenId);
       }
@@ -126,6 +127,60 @@ export const filteredComponentTree = createSelector(
     );
 
     return buildTree(filteredFlatComponents, disabledComponents, true, availableWidgets, showOnlyWidgets);
+  },
+);
+
+export const newFilteredComponentTree = createSelector(
+  [
+    getComponentsList,
+    getSearchTextSelector,
+    getDisabledComponentsSelector,
+    getShowOnlyWidgetsSelector,
+    allAvailableWidgetsSelector,
+  ],
+  (componentsList, keyword, disabledComponents, showOnlyWidgets, availableWidgets) => {
+    if (keyword === '') {
+      return buildTreeData(componentsList, disabledComponents, false, availableWidgets, showOnlyWidgets);
+    }
+
+    const searchText = _.toLower(keyword);
+    const searchResultIds = [];
+    const searchResults = _.filter(componentsList, (c) => {
+      /**
+       * @namespace
+       * @property {Object} c
+       * @property {Object} c.properties
+       * @property {string} c.properties.alias
+       * @property {string} c.properties.zoneName
+       * @property {string} c.properties.title
+       * @property {number} c.properties.widgetId
+       */
+      if (c.type === 'zone') {
+        const result = !showOnlyWidgets && _.includes(_.toLower(c.properties.zoneName), searchText);
+        if (result) {
+          searchResultIds.push(c.onScreenId);
+        }
+        return result;
+      }
+      const result = _.includes(_.toLower(c.properties.alias), searchText)
+        || _.includes(_.toLower(c.properties.title), searchText)
+        || _.includes(_.toLower(c.properties.widgetId), searchText);
+      if (result) {
+        searchResultIds.push(c.onScreenId);
+      }
+      return result;
+    });
+
+    const parentComponentIds = _.reduce(searchResults,
+      (prev, cur) => ([...prev, ...getParentComponents(componentsList, cur)]),
+      [],
+    );
+    const uniqResults = _.uniq(_.concat(searchResultIds, parentComponentIds));
+    const filteredFlatComponents = _.filter(componentsList, c =>
+      _.some(uniqResults, componentId => componentId === c.onScreenId),
+    );
+
+    return buildTreeData(filteredFlatComponents, disabledComponents, true, availableWidgets, showOnlyWidgets);
   },
 );
 

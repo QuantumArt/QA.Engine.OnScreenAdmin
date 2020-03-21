@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { getSubtreeState } from './componentTreeStateStorage';
-import {ELEMENT_TYPE} from "../constants/elementTypes";
+import { ELEMENT_TYPE } from '../constants/elementTypes';
 
 /** @namespace window.startPageId */
 
@@ -21,13 +21,13 @@ const endArticle = val => val.startsWith(endArticlePrefix);
 
 const isElement = val => isZone(val) || isWidget(val) || isArticle(val);
 
-const getElementType = val => {
-  if(isZone(val)){
+const getElementType = (val) => {
+  if (isZone(val)) {
     return ELEMENT_TYPE.ZONE;
-  } else if (isWidget(val)){
+  } else if (isWidget(val)) {
     return ELEMENT_TYPE.WIDGET;
   } else if (isArticle(val)) {
-    return ELEMENT_TYPE.ARTICLE
+    return ELEMENT_TYPE.ARTICLE;
   }
   return ELEMENT_TYPE.UNKNOWN;
 };
@@ -51,7 +51,7 @@ const mapProperties = (val) => {
   const pair = val.match(/(\w+)='([^']+)'/g);
   const initObj = {};
   const type = getElementType(val);
-  switch(type) {
+  switch (type) {
     case ELEMENT_TYPE.WIDGET:
       initObj.widgetId = Number(val.match(/(\d+)(?!(widget))/g)[0]);
       break;
@@ -145,7 +145,7 @@ function getCords(node, el) {
     return findFirstSubNode(startNode.nextSibling);
   };
   let endNodeValue = '';
-  switch(el.type) {
+  switch (el.type) {
     case ELEMENT_TYPE.WIDGET:
       endNodeValue = `end widget ${el.properties.widgetId}`;
       break;
@@ -157,7 +157,6 @@ function getCords(node, el) {
       break;
     default:
       break;
-
   }
 
   const findZoneLastSubNode = (startNode) => {
@@ -242,8 +241,8 @@ function getCords(node, el) {
 }
 
 
-
 export default function buildFlatList() {
+  console.log('buildFlatList called');
   const list = [];
   const hashMap = {};
   const stack = [];

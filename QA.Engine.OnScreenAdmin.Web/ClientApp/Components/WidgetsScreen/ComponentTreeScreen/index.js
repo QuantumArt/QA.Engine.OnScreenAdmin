@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import ComponentTree from 'containers/WidgetsScreen/ComponentTreeScreen/componentTree';
+import NewComponentTree from 'containers/WidgetsScreen/ComponentTreeScreen/newComponentTree';
 import HeaderWithSearchButton from 'Components/WidgetsScreen/HeaderWithSearchButton';
 import ComponentTreeSearch from 'containers/WidgetsScreen/ComponentTreeScreen/componentTreeSearch';
 
@@ -14,7 +14,7 @@ const ComponentTreeScreen = ({ showOnlyWidgets, showSearchBox, toggleSearchBoxVi
     {showSearchBox &&
       <ComponentTreeSearch />
     }
-    <ComponentTree />
+    <NewComponentTree />
   </Fragment>
 );
 

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import buildTreeData from "./buildTreeData";
 
 const getWidgetTypeIconSrc = (component, availableWidgets) => {
   if (availableWidgets === null || availableWidgets.length === 0) {
@@ -19,6 +20,8 @@ export default function buildTreeNew(
   availableWidgets = [],
   showOnlyWidgets = false,
 ) {
+  console.log('calling buildTreeData');
+  buildTreeData(list, disabledComponents, allOpened, availableWidgets, showOnlyWidgets);
   const _list = _.cloneDeep(list);
   const hashMap = {};
   _.forEach(_list, (component) => {
@@ -62,5 +65,6 @@ export default function buildTreeNew(
     }
   });
   // console.log(tree);
+  console.log('tree', tree);
   return tree;
 }
