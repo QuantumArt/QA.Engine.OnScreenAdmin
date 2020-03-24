@@ -1,9 +1,49 @@
 import Tree from '@atlaskit/tree';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd-next';
 
 
 import NewComponentItem from '../NewComponentItem';
+
+
+class PatchTree extends Tree {
+  render() {
+    const { isNestingEnabled } = this.props;
+    const renderedItems = this.renderItems();
+
+    return (
+      <DragDropContext
+        onDragStart={this.onDragStart}
+        onDragEnd={this.onDragEnd}
+        onDragUpdate={this.onDragUpdate}
+      >
+        <Droppable
+          droppableId="tree"
+          isCombineEnabled={isNestingEnabled}
+          ignoreContainerClipping
+        >
+          {/* eslint-disable-next-line arrow-parens */}
+          {dropProvided => {
+            const finalProvided = this.patchDroppableProvided(dropProvided);
+            return (
+              <div
+                ref={finalProvided.innerRef}
+                style={{ pointerEvents: 'auto' }}
+                onTouchMove={this.onPointerMove}
+                onMouseMove={this.onPointerMove}
+                {...finalProvided.droppableProps}
+              >
+                {renderedItems}
+                {dropProvided.placeholder}
+              </div>
+            );
+          }}
+        </Droppable>
+      </DragDropContext>
+    );
+  }
+}
 
 
 class NewComponentTree extends Component {
@@ -32,8 +72,7 @@ class NewComponentTree extends Component {
 
 
   renderItem = ({ item, provided }) => {
-    console.log('render item called', item);
-    const component = item.data;
+    // console.log('render item called', item);
     const {
       isMovingWidget,
       onMovingWidgetSelectTargetZone,
@@ -42,15 +81,17 @@ class NewComponentTree extends Component {
       onToggleSubtree,
       selectedComponentId,
     } = this.props;
+
+    const newDraggableProps = {
+      ...provided.draggableProps,
+      // isDragDisabled: true,
+    };
+
     return (
-      <div ref={provided.innerRef} {...provided.draggableProps}>
+      <div ref={provided.innerRef} {...newDraggableProps} {...provided.dragHandleProps}>
         <NewComponentItem
-          {...component}
-          onScreenId={component.onScreenId}
-          hasChildren={item.hasChildren}
-          isDisabled={component.isDisabled}
+          treeItem={item}
           isMovingWidget={isMovingWidget}
-          isOpened={item.isExpanded}
           onMovingWidgetSelectTargetZone={onMovingWidgetSelectTargetZone}
           selectedComponentId={selectedComponentId}
           onToggleComponent={onToggleComponent}
@@ -62,14 +103,16 @@ class NewComponentTree extends Component {
   };
 
   render() {
-    const { components } = this.props;
+    const { components, isMovingWidget } = this.props;
     console.log('rendering tree', components);
-    return (<Tree
+    return (<PatchTree
       tree={components}
       renderItem={this.renderItem}
       onExpand={this.onExpand}
       onCollapse={this.onCollapse}
       offsetPerLevel={16}
+      isDragEnabled={!isMovingWidget}
+
     />);
   }
 }

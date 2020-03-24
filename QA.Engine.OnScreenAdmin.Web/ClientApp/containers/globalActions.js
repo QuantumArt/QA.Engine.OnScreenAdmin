@@ -4,11 +4,11 @@ import { getShowAllZones, getShowAllWidgets } from 'selectors/componentsHighligh
 import { getEnabledMenuKeys } from 'selectors/globalContextMenu';
 import { getShowOnlyWidgetsSelector } from 'selectors/componentTree';
 import { beginWidgetCreation } from 'actions/widgetCreation/actions';
-import { toggleShowOnlyWidgets } from 'actions/componentTreeActions';
 import editPage from 'actions/editPage';
 import { WIDGET_CREATION_MODE } from 'constants/widgetCreation';
 import GlobalActions from 'Components/Sidebar/GlobalActions';
 import checkIsIframe from 'utils/checkIsIframe';
+import {toggleShowOnlyWidgets} from "../actions/componentTree/actions";
 
 
 const mapStateToProps = state => ({

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { ELEMENT_TYPE } from '../constants/elementTypes';
+import {getSubtreeState} from "./componentTreeStateStorage";
 
 const getWidgetTypeIconSrc = (component, availableWidgets) => {
   if (availableWidgets === null || availableWidgets.length === 0) {
@@ -13,15 +14,58 @@ const getWidgetTypeIconSrc = (component, availableWidgets) => {
   return null;
 };
 
-function getNextParentOfType(onScreenId, hashmap, allowedTypes) {
-  const component = hashmap[onScreenId];
+function getNextParentOfType(onScreenId, list, allowedTypes) {
+  const component = _.find(list, { onScreenId });
 
-  let parent = component && component.data.parentOnScreenId ? hashmap[component.data.parentOnScreenId] : null;
-  while (parent && !_.includes(allowedTypes, parent.data.type)) {
-    parent = parent.data.parentOnScreenId ? hashmap[parent.data.parentOnScreenId] : null;
+  let parent = component && component.parentOnScreenId
+    ? _.find(list, { onScreenId: component.parentOnScreenId })
+    : null;
+
+
+  while (parent && !_.includes(allowedTypes, parent.type)) {
+    parent = parent.parentOnScreenId
+      ? _.find(list, { onScreenId: component.parentOnScreenId })
+      : null;
   }
   return parent;
 }
+
+
+// PropTypes.shape({
+//   onScreenId: PropTypes.string.isRequired,
+//   type: PropTypes.oneOf([ELEMENT_TYPE.WIDGET, ELEMENT_TYPE.ZONE, ELEMENT_TYPE.ARTICLE]).isRequired,
+//   primaryText: PropTypes.string.isRequired,
+//   iconSrc: PropTypes.string,
+//   isDisabled: PropTypes.bool,
+// });
+function mapComponentToTreeItemData(source, availableWidgets, disabledComponents) {
+  let primaryText = '';
+  switch (source.type) {
+    case ELEMENT_TYPE.ZONE:
+      primaryText = source.properties.zoneName;
+      break;
+    case ELEMENT_TYPE.WIDGET:
+      primaryText = `#${source.properties.widgetId} ${source.properties.title}`;
+      break;
+    case ELEMENT_TYPE.ARTICLE:
+      primaryText = `#${source.properties.articleId} ${source.properties.title}`;
+      break;
+    default:
+      break;
+  }
+  return {
+    onScreenId: source.onScreenId,
+    type: source.type,
+    iconSrc: source.type === ELEMENT_TYPE.WIDGET ? getWidgetTypeIconSrc(source, availableWidgets) : '',
+    isDisabled: _.indexOf(disabledComponents, source.onScreenId) !== -1,
+    primaryText,
+  };
+}
+
+const isOpened = (onScreenId, storedState) => {
+  if (!storedState) { return false; }
+  return _.includes(storedState.openedNodes, onScreenId);
+};
 
 export default function buildTreeData(
   list,
@@ -34,14 +78,23 @@ export default function buildTreeData(
     ? [ELEMENT_TYPE.WIDGET]
     : [ELEMENT_TYPE.WIDGET, ELEMENT_TYPE.ZONE, ELEMENT_TYPE.ARTICLE];
   const _list = _.cloneDeep(list);
+
+  const storedState = getSubtreeState();
+
   const treeItems = _list.map(x => ({
     id: x.onScreenId,
     children: [],
     hasChildren: false,
-    isExpanded: x.isOpened,
+    isExpanded: isOpened(x.onScreenId, storedState),
     isChildrenLoading: false,
-    data: x,
+    data: mapComponentToTreeItemData(x, availableWidgets, disabledComponents),
   }));
+
+  const hashMap = {};
+  _.forEach(treeItems, (treeItem) => {
+    hashMap[treeItem.id] = treeItem;
+  });
+
   const rootItem = {
     id: 'root',
     children: [],
@@ -50,37 +103,28 @@ export default function buildTreeData(
     isChildrenLoading: false,
   };
 
-  const hashMap = {};
-  _.forEach(treeItems, (treeItem) => {
-    hashMap[treeItem.id] = treeItem;
-  });
-
-
-  // const tree = [];
   _.forEach(hashMap, (treeItem) => {
-    const component = treeItem.data;
-    component.isDisabled = _.indexOf(disabledComponents, component.onScreenId) !== -1;
+    const treeItemData = treeItem.data;
+
+    const sourceComponent = _.find(_list, { onScreenId: treeItem.data.onScreenId });
     if (allOpened && treeItem.children.length > 0) {
-      component.isOpened = true;
       treeItem.isExpanded = true;
     }
-    if (component.type === ELEMENT_TYPE.WIDGET) {
-      component.properties.widgetTypeIconSrc = getWidgetTypeIconSrc(component, availableWidgets);
+
+    let parentTreeItem = hashMap[sourceComponent.parentOnScreenId];
+
+    if (parentTreeItem && !_.includes(allowedTypes, parentTreeItem.type)) {
+      const newParentSourceComponent = getNextParentOfType(treeItemData.onScreenId, _list, allowedTypes);
+      const newParentId = newParentSourceComponent ? newParentSourceComponent.onScreenId : null;
+      sourceComponent.parentOnScreenId = newParentId;
+      parentTreeItem = newParentId ? hashMap[newParentId] : null;
     }
 
-    let parentTreeItem = hashMap[component.parentOnScreenId];
-
-    if (parentTreeItem && !_.includes(allowedTypes, parentTreeItem.data.type)) {
-      const nextParent = getNextParentOfType(component.onScreenId, hashMap, allowedTypes);
-      component.parentOnScreenId = nextParent ? nextParent.data.onScreenId : null;
-      parentTreeItem = nextParent;
-    }
-
-    if (_.includes(allowedTypes, component.type)) {
+    if (_.includes(allowedTypes, treeItemData.type)) {
       if (parentTreeItem) {
         parentTreeItem.children.push(treeItem.id);
       } else {
-        rootItem.children.push(component.onScreenId);
+        rootItem.children.push(treeItemData.onScreenId);
       }
     }
   });

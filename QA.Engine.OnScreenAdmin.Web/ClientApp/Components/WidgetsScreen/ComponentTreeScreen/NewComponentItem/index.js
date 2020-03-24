@@ -1,4 +1,4 @@
-import _ from 'lodash';
+// import _ from 'lodash';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import scrollToElement from 'scroll-to-element';
@@ -20,31 +20,47 @@ import ComponentControlMenu from 'containers/WidgetsScreen/componentControlMenu'
 import { MAX_COMPONENT_PRIMARY_TEXT_LENGTH } from 'constants/general';
 import { ELEMENT_TYPE } from 'constants/elementTypes';
 
-const componentCoords = PropTypes.shape({
-  top: PropTypes.number,
-  left: PropTypes.number,
-  width: PropTypes.number,
-  height: PropTypes.number,
+// const componentCoords = PropTypes.shape({
+//   top: PropTypes.number,
+//   left: PropTypes.number,
+//   width: PropTypes.number,
+//   height: PropTypes.number,
+// });
+
+// const widgetProperties = PropTypes.shape({
+//   widgetId: PropTypes.number.isRequired,
+//   // widgetTypeUconSrc: PropTypes.string,
+//   // type: PropTypes.string.isRequired,
+//   title: PropTypes.string.isRequired,
+//   componentCoords,
+// });
+//
+// const zoneProperties = PropTypes.shape({
+//   zoneName: PropTypes.string.isRequired,
+//   isRecursive: PropTypes.bool.isRequired,
+//   isGlobal: PropTypes.bool.isRequired,
+//   componentCoords,
+// });
+
+const treeItemDataProps = PropTypes.shape({
+  onScreenId: PropTypes.string.isRequired,
+  type: PropTypes.oneOf([ELEMENT_TYPE.WIDGET, ELEMENT_TYPE.ZONE, ELEMENT_TYPE.ARTICLE]).isRequired,
+  primaryText: PropTypes.string.isRequired,
+  iconSrc: PropTypes.string,
+  isDisabled: PropTypes.bool,
 });
 
-const widgetProperties = PropTypes.shape({
-  widgetId: PropTypes.number.isRequired,
-  widgetTypeUconSrc: PropTypes.string,
-  type: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  componentCoords,
+const treeItemProps = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+  children: PropTypes.arrayOf(PropTypes.string).isRequired,
+  hasChildren: PropTypes.bool.isRequired,
+  isExpanded: PropTypes.bool.isRequired,
+  data: PropTypes.objectOf(treeItemDataProps),
 });
 
-const zoneProperties = PropTypes.shape({
-  zoneName: PropTypes.string.isRequired,
-  isRecursive: PropTypes.bool.isRequired,
-  isGlobal: PropTypes.bool.isRequired,
-  componentCoords,
-});
-
-const articleProperties = PropTypes.shape({
-  title: PropTypes.string,
-});
+// const articleProperties = PropTypes.shape({
+//   title: PropTypes.string,
+// });
 
 const styles = theme => ({
   componentAvatar: {
@@ -103,19 +119,24 @@ const styles = theme => ({
 
 class NewComponentItem extends Component {
   static propTypes = {
+    treeItem: PropTypes.objectOf(treeItemProps).isRequired,
     onToggleComponent: PropTypes.func.isRequired,
     onToggleFullSubtree: PropTypes.func.isRequired,
     onToggleSubtree: PropTypes.func.isRequired,
-    type: PropTypes.string.isRequired,
-    onScreenId: PropTypes.string.isRequired,
-    isOpened: PropTypes.bool,
-    selectedComponentId: PropTypes.string.isRequired,
-    properties: PropTypes.oneOfType([widgetProperties, zoneProperties, articleProperties]).isRequired,
-    hasChildren: PropTypes.bool.isRequired,
-    classes: PropTypes.object.isRequired,
-    isMovingWidget: PropTypes.bool.isRequired,
-    isDisabled: PropTypes.bool.isRequired,
     onMovingWidgetSelectTargetZone: PropTypes.func.isRequired,
+    selectedComponentId: PropTypes.string.isRequired,
+    isMovingWidget: PropTypes.bool.isRequired,
+    classes: PropTypes.object.isRequired,
+    // type: PropTypes.string.isRequired,
+    // onScreenId: PropTypes.string.isRequired,
+    // isOpened: PropTypes.bool,
+
+    // properties: PropTypes.oneOfType([widgetProperties, zoneProperties, articleProperties]).isRequired,
+    // hasChildren: PropTypes.bool.isRequired,
+
+
+    // isDisabled: PropTypes.bool.isRequired,
+
   };
 
   static defaultProps = {
@@ -123,7 +144,12 @@ class NewComponentItem extends Component {
   };
 
   handleToggleClick = () => {
-    const { isMovingWidget, onScreenId, onToggleComponent, onMovingWidgetSelectTargetZone } = this.props;
+    const {
+      isMovingWidget,
+      onToggleComponent,
+      onMovingWidgetSelectTargetZone,
+      treeItem: { data: { onScreenId } },
+    } = this.props;
 
     if (isMovingWidget) {
       onMovingWidgetSelectTargetZone(onScreenId);
@@ -143,31 +169,33 @@ class NewComponentItem extends Component {
   };
 
   handleOnScreenToggleClick = () => {
+    const { treeItem: { data: { onScreenId } } } = this.props;
     this.handleToggleClick();
-    this.props.onToggleFullSubtree(this.props.onScreenId);
+    this.props.onToggleFullSubtree(onScreenId);
   };
 
   handleSubtreeClick = () => {
-    this.props.onToggleSubtree(this.props.onScreenId);
+    const { treeItem: { data: { onScreenId } } } = this.props;
+    this.props.onToggleSubtree(onScreenId);
   };
 
 
-  hasChildWidgets = (children) => {
-    if (!children || children.length === 0) {
-      return false;
-    }
-
-    return _.some(children, c => c.type === 'widget' || this.hasChildWidgets(c.children));
-  };
+  // hasChildWidgets = (children) => {
+  //   if (!children || children.length === 0) {
+  //     return false;
+  //   }
+  //
+  //   return _.some(children, c => c.type === 'widget' || this.hasChildWidgets(c.children));
+  // };
 
 
   renderContextMenu = (isSelected) => {
-    const { isMovingWidget } = this.props;
+    const { isMovingWidget, treeItem: { data: { onScreenId } } } = this.props;
     if (!isSelected || isMovingWidget) {
       return null;
     }
 
-    return (<ComponentControlMenu onScreenId={this.props.onScreenId} />);
+    return (<ComponentControlMenu onScreenId={onScreenId} />);
   };
 
   renderListItemText = (primaryText, isSelected, classes) => (
@@ -182,35 +210,20 @@ class NewComponentItem extends Component {
   );
 
 
-  renderSecondaryText = (type, properties) => {
-    if (type === 'zone') {
-      let zoneSettings = '';
-      if (properties.isRecursive) zoneSettings += ' recursive';
-      if (properties.isGlobal) zoneSettings += ' global';
+  // renderSecondaryText = (type, properties) => {
+  //   if (type === 'zone') {
+  //     let zoneSettings = '';
+  //     if (properties.isRecursive) zoneSettings += ' recursive';
+  //     if (properties.isGlobal) zoneSettings += ' global';
+  //
+  //     return zoneSettings === '' ? 'zone' : `${type}:${zoneSettings}`;
+  //   }
+  //
+  //   return `${type}: ID - ${properties.widgetId}`;
+  // };
 
-      return zoneSettings === '' ? 'zone' : `${type}:${zoneSettings}`;
-    }
 
-    return `${type}: ID - ${properties.widgetId}`;
-  };
-
-
-  renderListItemTextWrapper = (type, properties, isSelected, classes) => {
-    let primaryText = '';
-    switch (type) {
-      case ELEMENT_TYPE.ZONE:
-        primaryText = properties.zoneName;
-        break;
-      case ELEMENT_TYPE.WIDGET:
-        primaryText = `#${properties.widgetId} ${properties.title}`;
-        break;
-      case ELEMENT_TYPE.ARTICLE:
-        primaryText = `#${properties.articleId} ${properties.title}`;
-        break;
-      default:
-        break;
-    }
-
+  renderListItemTextWrapper = (primaryText, isSelected, classes) => {
     const isPrimaryTextTruncated = primaryText.length > MAX_COMPONENT_PRIMARY_TEXT_LENGTH;
     const textToRender = isPrimaryTextTruncated
       ? `${primaryText.substring(0, MAX_COMPONENT_PRIMARY_TEXT_LENGTH)}…`
@@ -247,7 +260,7 @@ class NewComponentItem extends Component {
     );
   };
 
-  renderListItemIcon = (type, properties, isSelected, classes) => {
+  renderListItemIcon = (type, iconSrc, isNew, isSelected, classes) => {
     const className = isSelected ? classes.componentAvatarSelected : classes.componentAvatar;
 
     switch (type) {
@@ -256,14 +269,14 @@ class NewComponentItem extends Component {
           <ZoneIcon className={className} />
         );
       case ELEMENT_TYPE.WIDGET:
-        if (properties.widgetTypeIconSrc) {
+        if (iconSrc) {
           return (
             <Fragment>
-              {properties.widgetTypeIconSrc
-                ? (<Avatar className={className} src={properties.widgetTypeIconSrc} />)
+              {iconSrc
+                ? (<Avatar className={className} src={iconSrc} />)
                 : (<Avatar className={className}><Widgets /></Avatar>)
               }
-              {!properties.published && (<Unpublished className={classes.unpublishedOverlay} />)}
+              {isNew && (<Unpublished className={classes.unpublishedOverlay} />)}
             </Fragment>
           );
         }
@@ -271,7 +284,7 @@ class NewComponentItem extends Component {
       case ELEMENT_TYPE.ARTICLE:
         return (<Fragment>
           <Avatar className={className}><ArticleIcon className={className} /></Avatar>
-          {!properties.published && (<Unpublished className={classes.unpublishedOverlay} />)}
+          {isNew && (<Unpublished className={classes.unpublishedOverlay} />)}
         </Fragment>);
       default:
         return null;
@@ -280,15 +293,14 @@ class NewComponentItem extends Component {
 
   renderListItem = () => {
     const {
-      onScreenId,
-      properties,
+      treeItem,
       selectedComponentId,
       classes,
-      isOpened,
-      isDisabled,
-      type,
-      hasChildren,
     } = this.props;
+
+    const { hasChildren, isExpanded, data } = treeItem;
+
+    const { onScreenId, type, isNew, primaryText, isDisabled, iconSrc } = data;
 
     const isSelected = selectedComponentId === onScreenId;
 
@@ -304,11 +316,11 @@ class NewComponentItem extends Component {
         ContainerComponent={'div'}
         button
       >
-        {this.renderListItemIcon(type, properties, isSelected, classes)}
-        {this.renderListItemTextWrapper(type, properties, isSelected, classes)}
+        {this.renderListItemIcon(type, iconSrc, isNew, isSelected, classes)}
+        {this.renderListItemTextWrapper(primaryText, isSelected, classes)}
         <ListItemSecondaryAction>
           {this.renderContextMenu(isSelected)}
-          {this.renderCollapseButton(isOpened, hasChildren, classes)}
+          {this.renderCollapseButton(isExpanded, hasChildren, classes)}
         </ListItemSecondaryAction>
       </ListItem>
     );

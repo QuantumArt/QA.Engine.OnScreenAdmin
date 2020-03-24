@@ -1,4 +1,4 @@
-import { CHANGE_AVAILABLE_WIDGETS_SEARCH_TEXT, ADD_WIDGET_ACTIONS } from './actionTypes';
+import {ADD_WIDGET_ACTIONS, CHANGE_AVAILABLE_WIDGETS_SEARCH_TEXT} from './actionTypes';
 
 
 export function selectWidgetToAdd(id) {

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getSubtreeState } from './componentTreeStateStorage';
+// import { getSubtreeState } from './componentTreeStateStorage';
 import { ELEMENT_TYPE } from '../constants/elementTypes';
 
 /** @namespace window.startPageId */
@@ -77,11 +77,11 @@ const mapProperties = (val) => {
   }, initObj);
 };
 
-const storedState = getSubtreeState();
-const isOpened = (onScreenId) => {
-  if (!storedState) { return false; }
-  return _.includes(storedState.openedNodes, onScreenId);
-};
+// const storedState = getSubtreeState();
+// const isOpened = (onScreenId) => {
+//   if (!storedState) { return false; }
+//   return _.includes(storedState.openedNodes, onScreenId);
+// };
 
 /**
  * Constructs list element using comment's data.
@@ -105,8 +105,6 @@ const constructElement = (type, val, onScreenId, parentOnScreenId, nestLevel) =>
   onScreenId,
   parentOnScreenId,
   isSelected: false,
-  isOpened: isOpened(onScreenId),
-  isDisabled: false,
   type,
   nestLevel,
   properties: mapProperties(val),

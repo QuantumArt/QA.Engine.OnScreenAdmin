@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect';
 import _ from 'lodash';
-import buildTree from 'utils/buildTreeNew';
+// import buildTree from 'utils/buildTreeNew';
 import { allAvailableWidgetsSelector } from './availableWidgets';
-import buildTreeData from "../utils/buildTreeData";
+import buildTreeData from '../utils/buildTreeData';
 
 
-const getComponentTree = state => buildTree(state.componentTree.components); // TODO: fix
+const getComponentTree = state => buildTreeData(state.componentTree.components); // TODO: fix
 const getComponentsList = state => state.componentTree.components;
 const getMaxNestLevel = state => state.componentTree.maxNestLevel;
 const getSelectedComponentId = state => state.componentTree.selectedComponentId;
@@ -86,7 +86,7 @@ export const filteredComponentTree = createSelector(
   ],
   (componentsList, keyword, disabledComponents, showOnlyWidgets, availableWidgets) => {
     if (keyword === '') {
-      return buildTree(componentsList, disabledComponents, false, availableWidgets, showOnlyWidgets);
+      return buildTreeData(componentsList, disabledComponents, false, availableWidgets, showOnlyWidgets);
     }
 
     const searchText = _.toLower(keyword);
@@ -126,7 +126,7 @@ export const filteredComponentTree = createSelector(
       _.some(uniqResults, componentId => componentId === c.onScreenId),
     );
 
-    return buildTree(filteredFlatComponents, disabledComponents, true, availableWidgets, showOnlyWidgets);
+    return buildTreeData(filteredFlatComponents, disabledComponents, true, availableWidgets, showOnlyWidgets);
   },
 );
 

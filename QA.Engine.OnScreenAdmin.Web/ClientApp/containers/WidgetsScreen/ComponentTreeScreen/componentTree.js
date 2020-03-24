@@ -7,14 +7,9 @@ import {
   getIsMovingWidgetSelector,
   getShowOnlyWidgetsSelector,
 } from 'selectors/componentTree';
-import {
-  toggleComponent,
-  toggleSubtree,
-  toggleFullSubtree,
-  finishMovingWidget,
-  movingWidgetSelectTargetZone,
-} from 'actions/componentTreeActions';
-import ComponentTree from 'Components/WidgetsScreen/ComponentTreeScreen/ComponentTree';
+import NewComponentTree from 'Components/WidgetsScreen/ComponentTreeScreen/NewComponentTree';
+import { finishMovingWidget, movingWidgetSelectTargetZone } from '../../../actions/moveWidgetActions';
+import { toggleComponent, toggleFullSubtree, toggleSubtree } from '../../../actions/componentTree/actions';
 
 const mapStateToProps = state => ({
   components: filteredComponentTree(state),
@@ -47,6 +42,6 @@ const mapDispatchToProps = dispatch => ({
 const ComponentTreeContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(ComponentTree);
+)(NewComponentTree);
 
 export default ComponentTreeContainer;

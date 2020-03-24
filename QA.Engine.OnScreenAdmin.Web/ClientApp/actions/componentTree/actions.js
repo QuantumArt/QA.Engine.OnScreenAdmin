@@ -1,12 +1,11 @@
 import {
+  CHANGE_COMPONENT_TREE_SEARCH_TEXT, COMPONENTS_LIST_UPDATE_REQUESTED, COMPONENTS_LIST_UPDATED,
   TOGGLE_COMPONENT,
-  TOGGLE_SUBTREE,
-  TOGGLE_FULL_SUBTREE,
-  CHANGE_COMPONENT_TREE_SEARCH_TEXT,
-  UPDATE_COMPONENTS,
-  EDIT_WIDGET_ACTIONS,
-  TOGGLE_SHOW_ONLY_WIDGETS,
   TOGGLE_COMPONENT_TREE_SEARCH_BOX,
+  TOGGLE_FULL_SUBTREE,
+  TOGGLE_SHOW_ONLY_WIDGETS,
+  TOGGLE_SUBTREE,
+  UPDATE_COMPONENTS,
 } from './actionTypes';
 
 export function toggleComponent(id) {
@@ -25,15 +24,6 @@ export function changeSearchText(newValue) {
   return { type: CHANGE_COMPONENT_TREE_SEARCH_TEXT, value: newValue };
 }
 
-export function finishMovingWidget(id) {
-  return { type: EDIT_WIDGET_ACTIONS.FINISH_MOVING_WIDGET, id };
-}
-
-export function movingWidgetSelectTargetZone(id) {
-  return { type: EDIT_WIDGET_ACTIONS.MOVING_WIDGET_SELECT_TARGET_ZONE, id };
-}
-
-
 export function updateComponents(components) {
   return { type: UPDATE_COMPONENTS, components };
 }
@@ -44,4 +34,12 @@ export function toggleShowOnlyWidgets() {
 
 export function toggleComponentTreeSearchBox() {
   return { type: TOGGLE_COMPONENT_TREE_SEARCH_BOX };
+}
+
+export function requestComponentsListUpdate() {
+  return { type: COMPONENTS_LIST_UPDATE_REQUESTED };
+}
+
+export function componentsListUpdated() {
+  return { type: COMPONENTS_LIST_UPDATED };
 }

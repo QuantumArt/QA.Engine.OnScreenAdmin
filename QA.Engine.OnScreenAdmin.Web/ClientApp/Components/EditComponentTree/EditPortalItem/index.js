@@ -105,6 +105,9 @@ EditPortalItem.propTypes = {
       isRecursive: PropTypes.bool.isRequired,
       isGlobal: PropTypes.bool.isRequired,
     }),
+    PropTypes.shape({
+      title: PropTypes.string,
+    }),
   ]).isRequired,
   nestLevel: PropTypes.number.isRequired,
   maxNestLevel: PropTypes.number.isRequired,

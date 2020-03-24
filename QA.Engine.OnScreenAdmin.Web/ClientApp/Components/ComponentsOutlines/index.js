@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Portal from 'Components/Portal';
-import buildFlatList from 'utils/buildFlatList';
 
 const styles = () => ({
   highlightsWrap: {
@@ -29,10 +28,8 @@ class ComponentsOutlines extends Component {
   }
 
   update = () => {
-    const { updateComponents } = this.props;
-    const components = buildFlatList();
-    updateComponents(components);
-  }
+    this.props.requestUpdateComponents();
+  };
 
   render() {
     const { components, classes } = this.props;
@@ -77,7 +74,7 @@ class ComponentsOutlines extends Component {
 
 ComponentsOutlines.propTypes = {
   components: PropTypes.arrayOf(PropTypes.object).isRequired,
-  updateComponents: PropTypes.func.isRequired,
+  requestUpdateComponents: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
