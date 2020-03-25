@@ -1,21 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+
 import Portal from 'Components/Portal';
+
 import buildFlatList from 'utils/buildFlatList';
+
+import ComponentOutline from './ComponentOutline';
 
 const styles = () => ({
   highlightsWrap: {
     position: 'absolute',
     top: 0,
     left: 0,
-    // pointerEvents: 'none',
     zIndex: 999,
-  },
-  highlightsItem: {
-    position: 'absolute',
-    // pointerEvents: 'none',
-    outline: 'none',
   },
 });
 
@@ -35,7 +33,7 @@ class ComponentsOutlines extends Component {
   }
 
   render() {
-    const { components, classes } = this.props;
+    const { showOnlyWidgets, components, classes } = this.props;
     return (
       <Portal>
         <div
@@ -48,27 +46,13 @@ class ComponentsOutlines extends Component {
           }}
         >
           {components.map((component) => {
+            if (showOnlyWidgets && component.type !== 'widget') return null;
+
             const coords = component.properties.componentCoords;
             if (!Object.keys(coords).length) return null;
-            const borderWidth = component.isSelected ? '2px' : '0px';
-            const borderColor = component.type === 'widget' ? '#29b6f6' : '#66bb6a';
-            return (
-              <div
-                key={component.onScreenId}
-                className={`${classes.highlightsItem} component--${component.onScreenId}`}
-                role="button"
-                tabIndex={0}
-                style={{
-                  top: `${coords.top}px`,
-                  left: `${coords.left}px`,
-                  width: `${coords.width}px`,
-                  height: `${coords.height}px`,
-                  border: `${borderWidth} dashed ${borderColor}`,
-                }}
-              />
-            );
-          })
-          }
+
+            return <ComponentOutline key={component.onScreenId} coords={coords} component={component} />;
+          })}
         </div>
       </Portal>
     );
@@ -76,6 +60,7 @@ class ComponentsOutlines extends Component {
 }
 
 ComponentsOutlines.propTypes = {
+  showOnlyWidgets: PropTypes.bool.isRequired,
   components: PropTypes.arrayOf(PropTypes.object).isRequired,
   updateComponents: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
