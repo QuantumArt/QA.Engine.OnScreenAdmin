@@ -41,7 +41,7 @@ class ComponentsOutlines extends Component {
             // width: '100%',
           }}
         >
-          {components.map((component) => {
+          {components.sort((a, b) => a.nestLevel - b.nestLevel).map((component) => {
             if (showOnlyWidgets && component.type !== 'widget') return null;
 
             const coords = component.properties.componentCoords;
