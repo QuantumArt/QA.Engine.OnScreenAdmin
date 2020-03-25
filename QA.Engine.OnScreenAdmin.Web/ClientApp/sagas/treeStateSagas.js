@@ -2,12 +2,12 @@ import { call, select, takeLatest } from 'redux-saga/effects';
 import { setSubtreeState } from 'utils/componentTreeStateStorage';
 import { TOGGLE_FULL_SUBTREE, TOGGLE_SUBTREE } from '../actions/componentTree/actionTypes';
 
-export const getComponents = state => state.componentTree.components;
+export const getTreeData = state => state.componentTree.treeData;
 
 function* saveSubtreeOpenState() {
   try {
-    const components = yield select(getComponents);
-    yield call(setSubtreeState, components);
+    const treeData = yield select(getTreeData);
+    yield call(setSubtreeState, treeData);
   } catch (error) {
     // do nothing
   }

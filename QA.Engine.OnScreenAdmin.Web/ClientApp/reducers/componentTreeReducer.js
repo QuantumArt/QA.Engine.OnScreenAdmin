@@ -1,9 +1,12 @@
+import _ from 'lodash';
+import { mutateTree } from '@atlaskit/tree';
 import {
   CHANGE_COMPONENT_TREE_SEARCH_TEXT, TOGGLE_COMPONENT,
   TOGGLE_COMPONENT_TREE_SEARCH_BOX, TOGGLE_FULL_SUBTREE,
   TOGGLE_SHOW_ONLY_WIDGETS, TOGGLE_SUBTREE,
-  UPDATE_COMPONENTS,
+  UPDATE_COMPONENTS, UPDATE_TREE_DATA,
 } from '../actions/componentTree/actionTypes';
+
 
 
 const getMaxNestLevel = comps => comps.map(c => c.nestLevel).reduce((max, cur) => Math.max(max, cur));
@@ -37,15 +40,14 @@ export default function componentTreeReducer(state = initialState, action) {
           ? ''
           : action.id,
       };
-    case TOGGLE_SUBTREE:
+    case TOGGLE_SUBTREE: {
+      const node = _.find(state.treeData.items, { id: action.id });
+      const prevState = node && node.isExpanded;
       return {
         ...state,
-        components: state.components.map(component =>
-          (component.onScreenId === action.id
-            ? { ...component, isOpened: !component.isOpened }
-            : component),
-        ),
+        treeData: mutateTree(state.treeData, action.id, { isExpanded: !prevState }),
       };
+    }
     case TOGGLE_FULL_SUBTREE: {
       const getParentId = (id) => {
         const arr = id.split(';');
@@ -101,6 +103,12 @@ export default function componentTreeReducer(state = initialState, action) {
         ...state,
         showSearchBox: !state.showSearchBox,
         searchText: '',
+      };
+
+    case UPDATE_TREE_DATA:
+      return {
+        ...state,
+        treeData: action.treeData,
       };
     default:
       return state;

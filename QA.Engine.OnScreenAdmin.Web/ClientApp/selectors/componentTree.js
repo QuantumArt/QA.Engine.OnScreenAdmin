@@ -1,7 +1,7 @@
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 import _ from 'lodash';
 // import buildTree from 'utils/buildTreeNew';
-import { allAvailableWidgetsSelector } from './availableWidgets';
+import {allAvailableWidgetsSelector} from './availableWidgets';
 import buildTreeData from '../utils/buildTreeData';
 
 
@@ -13,6 +13,8 @@ const getSearchText = state => state.componentTree.searchText;
 const getMovingWidget = state => state.articleManagement.moveWidget;
 const getShowOnlyWidgets = state => state.componentTree.showOnlyWidgets;
 const getShowSearchBox = state => state.componentTree.showSearchBox;
+
+const getTreeData = state => state.componentTree.treeData;
 
 const getParentComponents = (allComponents, component) => {
   const parentIds = [];
@@ -30,6 +32,7 @@ export const getMaxNestLevelSelector = createSelector(getMaxNestLevel, _.identit
 export const getSelectedComponentIdSelector = createSelector(getSelectedComponentId, _.identity);
 export const getSearchTextSelector = createSelector(getSearchText, _.identity);
 export const getShowSearchBoxSelector = createSelector(getShowSearchBox, _.identity);
+export const getTreeDataSelector = createSelector(getTreeData, _.identity);
 
 const isMoving = movingWidget => !(movingWidget == null || !movingWidget.isActive || !movingWidget.onScreenId);
 export const getIsMovingWidgetSelector = createSelector(
@@ -73,6 +76,56 @@ export const getDisabledComponentsSelector = createSelector(
     }
 
     return _.uniq([...widgetsId, ...movingWidgetChildrenId, movingWidgetParentZoneId]);
+  },
+);
+
+export const filteredComponentList = createSelector(
+  [
+    getComponentsList,
+    getSearchTextSelector,
+    getShowOnlyWidgetsSelector,
+  ],
+  (componentsList, keyword, showOnlyWidgets) => {
+    if (keyword === '') {
+      return componentsList;
+    }
+
+    const searchText = _.toLower(keyword);
+    const searchResultIds = [];
+    const searchResults = _.filter(componentsList, (c) => {
+      /**
+       * @namespace
+       * @property {Object} c
+       * @property {Object} c.properties
+       * @property {string} c.properties.alias
+       * @property {string} c.properties.zoneName
+       * @property {string} c.properties.title
+       * @property {number} c.properties.widgetId
+       */
+      if (c.type === 'zone') {
+        const result = !showOnlyWidgets && _.includes(_.toLower(c.properties.zoneName), searchText);
+        if (result) {
+          searchResultIds.push(c.onScreenId);
+        }
+        return result;
+      }
+      const result = _.includes(_.toLower(c.properties.alias), searchText)
+        || _.includes(_.toLower(c.properties.title), searchText)
+        || _.includes(_.toLower(c.properties.widgetId), searchText);
+      if (result) {
+        searchResultIds.push(c.onScreenId);
+      }
+      return result;
+    });
+
+    const parentComponentIds = _.reduce(searchResults,
+      (prev, cur) => ([...prev, ...getParentComponents(componentsList, cur)]),
+      [],
+    );
+    const uniqResults = _.uniq(_.concat(searchResultIds, parentComponentIds));
+    return _.filter(componentsList, c =>
+      _.some(uniqResults, componentId => componentId === c.onScreenId),
+    );
   },
 );
 

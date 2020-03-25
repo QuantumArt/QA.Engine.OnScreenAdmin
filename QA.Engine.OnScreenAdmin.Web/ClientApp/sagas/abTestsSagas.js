@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { getTestsData, setGlobalTestState } from 'api';
-import { delay } from 'redux-saga';
-import { all, call, put, takeEvery, } from 'redux-saga/effects';
+import { all, call, put, takeEvery, delay } from 'redux-saga/effects';
 import {
   API_GET_TESTS_DATA_ERROR,
   API_GET_TESTS_DATA_SUCCESS,

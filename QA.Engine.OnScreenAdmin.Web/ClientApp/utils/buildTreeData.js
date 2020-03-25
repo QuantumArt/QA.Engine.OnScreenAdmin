@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { ELEMENT_TYPE } from '../constants/elementTypes';
-import {getSubtreeState} from "./componentTreeStateStorage";
+import { getSubtreeState } from './componentTreeStateStorage';
 
 const getWidgetTypeIconSrc = (component, availableWidgets) => {
   if (availableWidgets === null || availableWidgets.length === 0) {
@@ -24,7 +24,7 @@ function getNextParentOfType(onScreenId, list, allowedTypes) {
 
   while (parent && !_.includes(allowedTypes, parent.type)) {
     parent = parent.parentOnScreenId
-      ? _.find(list, { onScreenId: component.parentOnScreenId })
+      ? _.find(list, { onScreenId: parent.parentOnScreenId })
       : null;
   }
   return parent;
@@ -74,6 +74,10 @@ export default function buildTreeData(
   availableWidgets = [],
   showOnlyWidgets = false,
 ) {
+  console.log('buildTreeData called', { list, disabledComponents, allOpened, availableWidgets, showOnlyWidgets });
+  if (!list) {
+    return null;
+  }
   const allowedTypes = showOnlyWidgets
     ? [ELEMENT_TYPE.WIDGET]
     : [ELEMENT_TYPE.WIDGET, ELEMENT_TYPE.ZONE, ELEMENT_TYPE.ARTICLE];

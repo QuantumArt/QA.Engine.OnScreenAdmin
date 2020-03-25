@@ -77,12 +77,6 @@ const mapProperties = (val) => {
   }, initObj);
 };
 
-// const storedState = getSubtreeState();
-// const isOpened = (onScreenId) => {
-//   if (!storedState) { return false; }
-//   return _.includes(storedState.openedNodes, onScreenId);
-// };
-
 /**
  * Constructs list element using comment's data.
  * @param {('widget'|'zone'|'article')} type
@@ -92,8 +86,6 @@ const mapProperties = (val) => {
  * @param {number} nestLevel
  * @returns {{
  *  isSelected: boolean,
- *  isOpened: boolean,
- *  isDisabled: boolean,
  *  type: ('widget'|'zone'|'article'),
  *  nestLevel: number,
  *  onScreenId: string,

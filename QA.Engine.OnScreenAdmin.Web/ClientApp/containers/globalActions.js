@@ -8,7 +8,7 @@ import editPage from 'actions/editPage';
 import { WIDGET_CREATION_MODE } from 'constants/widgetCreation';
 import GlobalActions from 'Components/Sidebar/GlobalActions';
 import checkIsIframe from 'utils/checkIsIframe';
-import {toggleShowOnlyWidgets} from "../actions/componentTree/actions";
+import { toggleShowOnlyWidgets } from '../actions/componentTree/actions';
 
 
 const mapStateToProps = state => ({
@@ -33,6 +33,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(beginWidgetCreation(payload));
   },
   toggleShowOnlyWidgets: () => {
+    console.log('show only widgets dispatch');
     dispatch(toggleShowOnlyWidgets());
   },
   editPage: (currentPageId) => {

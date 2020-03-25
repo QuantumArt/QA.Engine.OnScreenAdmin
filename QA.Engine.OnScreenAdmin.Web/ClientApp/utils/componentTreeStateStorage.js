@@ -3,11 +3,11 @@ import _ from 'lodash';
 
 /** @namespace window.currentPageId */
 
-export const setSubtreeState = (components) => {
+export const setSubtreeState = (treeData) => {
   const currentPageId = window.currentPageId;
   const key = `subtrees_state_${currentPageId}`;
-  const filtered = _.filter(components, { isOpened: true });
-  const mapped = _.map(filtered, 'onScreenId');
+  const filtered = _.filter(treeData.items, { isExpanded: true });
+  const mapped = _.map(filtered, 'id');
   const currentData = { openedNodes: mapped };
   store.set(key, currentData);
 };
