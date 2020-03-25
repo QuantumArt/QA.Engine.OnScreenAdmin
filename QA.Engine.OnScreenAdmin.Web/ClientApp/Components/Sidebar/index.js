@@ -141,7 +141,7 @@ function Sidebar(props) {
         </Scrollbars>
 
       </Drawer>
-      {opened && <ComponentsOutlines /> }
+      {opened && <ComponentsOutlines />}
     </div>
   );
 }
