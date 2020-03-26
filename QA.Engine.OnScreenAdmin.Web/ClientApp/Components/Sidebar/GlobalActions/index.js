@@ -29,6 +29,7 @@ const GlobalActions = (props) => {
         editPage={editPage}
       />
       <ToggleButtons
+        showOnlyWidgets={showOnlyWidgets}
         showAllWidgets={showAllWidgets}
         showAllZones={showAllZones}
         toggleAllWidgets={toggleAllWidgets}

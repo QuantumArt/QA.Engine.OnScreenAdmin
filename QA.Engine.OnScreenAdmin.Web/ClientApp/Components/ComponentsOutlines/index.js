@@ -33,7 +33,8 @@ class ComponentsOutlines extends Component {
   }
 
   render() {
-    const { showOnlyWidgets, components, classes } = this.props;
+    const { showAllZones, showAllWidgets, showOnlyWidgets, components, classes } = this.props;
+
     return (
       <Portal>
         <div
@@ -51,7 +52,15 @@ class ComponentsOutlines extends Component {
             const coords = component.properties.componentCoords;
             if (!Object.keys(coords).length) return null;
 
-            return <ComponentOutline key={component.onScreenId} coords={coords} component={component} />;
+            return (
+              <ComponentOutline
+                key={component.onScreenId}
+                showAllZones={showAllZones}
+                showAllWidgets={showAllWidgets}
+                coords={coords}
+                component={component}
+              />
+            );
           })}
         </div>
       </Portal>
@@ -60,6 +69,8 @@ class ComponentsOutlines extends Component {
 }
 
 ComponentsOutlines.propTypes = {
+  showAllZones: PropTypes.bool.isRequired,
+  showAllWidgets: PropTypes.bool.isRequired,
   showOnlyWidgets: PropTypes.bool.isRequired,
   components: PropTypes.arrayOf(PropTypes.object).isRequired,
   updateComponents: PropTypes.func.isRequired,
