@@ -31,11 +31,12 @@ const styles = theme => ({
 
 const ToggleButtons = (props) => {
   const {
-    classes,
-    toggleAllWidgets,
-    toggleAllZones,
-    showAllWidgets,
+    showOnlyWidgets,
     showAllZones,
+    showAllWidgets,
+    toggleAllZones,
+    toggleAllWidgets,
+    classes,
   } = props;
 
   return (
@@ -50,21 +51,25 @@ const ToggleButtons = (props) => {
           <WidgetIcon />
         </Button>
       </Tooltip>
-      <Tooltip id="zonesTooltip" title="Highlight zones" classes={{ tooltip: classes.tooltipRoot }} enterDelay={300}>
-        <Button
-          classes={{ root: classes.buttonRoot }}
-          onClick={toggleAllZones}
-          className={showAllZones ? classes.zonesButtonChecked : classes.buttonUnchecked}
-        >
-          <ZoneIcon />
-        </Button>
-      </Tooltip>
+      {!showOnlyWidgets &&
+        (
+          <Tooltip id="zonesTooltip" title="Highlight zones" classes={{ tooltip: classes.tooltipRoot }} enterDelay={300}>
+            <Button
+              classes={{ root: classes.buttonRoot }}
+              onClick={toggleAllZones}
+              className={showAllZones ? classes.zonesButtonChecked : classes.buttonUnchecked}
+            >
+              <ZoneIcon />
+            </Button>
+          </Tooltip>
+        )}
 
     </Fragment>
   );
 };
 
 ToggleButtons.propTypes = {
+  showOnlyWidgets: PropTypes.bool.isRequired,
   showAllZones: PropTypes.bool.isRequired,
   showAllWidgets: PropTypes.bool.isRequired,
   toggleAllZones: PropTypes.func.isRequired,
