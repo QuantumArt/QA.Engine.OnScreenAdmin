@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import scrollToElement from 'scroll-to-element';
-import scrollIntoView from 'scroll-into-view';
+import { Settings } from 'material-ui-icons';
 
 const styles = () => ({
   highlightsItem: {
@@ -13,6 +12,22 @@ const styles = () => ({
     '&:hover': {
       borderStyle: 'dashed',
     },
+  },
+  highlightsBody: {
+    'height': '100%',
+    'width': '100%',
+    'position': 'relative',
+    'opacity': '0',
+    'transition': 'opacity 0.3s',
+    '&:hover': {
+      opacity: '1',
+    },
+  },
+  editButton: {
+    top: 0,
+    right: 0,
+    position: 'absolute',
+    outline: 'none',
   },
 });
 
@@ -39,7 +54,24 @@ function ComponentOutline({ showAllZones, showAllWidgets, coords, component, cla
       onClick={() => onSelectComponent(component.onScreenId)}
       className={`${classes.highlightsItem} component--${component.onScreenId}`}
       style={inlineStyles}
-    />
+    >
+      {component.type === 'widget' && (
+        <div className={classes.highlightsBody}>
+          <i
+            tabIndex={0}
+            role="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log(`Добавить обработку редактирования ${component.type} ${component.onScreenId}`);
+            }}
+            className={classes.editButton}
+          >
+            <Settings style={{ fontSize: 14 }} />
+          </i>
+        </div>
+      )
+      }
+    </div >
   );
 }
 
