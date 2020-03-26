@@ -27,6 +27,7 @@ const styles = () => ({
     top: 0,
     right: 0,
     position: 'absolute',
+    outline: 'none',
   },
 });
 
