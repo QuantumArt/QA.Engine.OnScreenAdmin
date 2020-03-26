@@ -29,7 +29,7 @@ class ComponentsOutlines extends Component {
   };
 
   render() {
-    const { showAllZones, showAllWidgets, showOnlyWidgets, components, classes } = this.props;
+    const { showAllZones, showAllWidgets, showOnlyWidgets, components, classes, onSelectComponent } = this.props;
 
     return (
       <Portal>
@@ -55,6 +55,7 @@ class ComponentsOutlines extends Component {
                 showAllWidgets={showAllWidgets}
                 coords={coords}
                 component={component}
+                onSelectComponent={onSelectComponent}
               />
             );
           })}
@@ -71,6 +72,7 @@ ComponentsOutlines.propTypes = {
   components: PropTypes.arrayOf(PropTypes.object).isRequired,
   requestUpdateComponents: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
+  onSelectComponent: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(ComponentsOutlines);

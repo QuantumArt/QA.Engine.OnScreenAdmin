@@ -1,26 +1,57 @@
-import scrollToElement from 'scroll-to-element';
+import scrollIntoView from 'scroll-into-view';
 import { put, takeEvery, all } from 'redux-saga/effects';
-import { ONSCREEN_TOGGLE_COMPONENT } from '../actions/actionTypes';
-import { TOGGLE_COMPONENT, TOGGLE_FULL_SUBTREE } from '../actions/componentTree/actionTypes';
+import { ONSCREEN_SELECT_COMPONENT } from '../actions/actionTypes';
+import {
+  COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT,
+} from '../actions/componentTree/actionTypes';
+import {
+  componentTreeOnScreenOpenFullSubtree,
+  componentTreeOnScreenScrollToTreeItem,
+  componentTreeOnScreenSelectComponent,
+} from '../actions/componentTree/actions';
 
-function* toggleOnScreen(action) {
-  yield put({ type: TOGGLE_COMPONENT, id: action.onScreenId });
-  yield put({ type: TOGGLE_FULL_SUBTREE, id: action.onScreenId });
-  scrollToElement(`[data-qa-component-on-screen-id="${action.onScreenId}"]`,
-    { offset: -100,
-      ease: 'in-out-expo', // https://github.com/component/ease#aliases
-      duration: 1500,
-    },
-  );
+
+function* onScreenSelectComponent(action) {
+  console.log('onScreenSelectComponent saga', action);
+  yield put(componentTreeOnScreenOpenFullSubtree(action.onScreenId));
+  yield put(componentTreeOnScreenSelectComponent(action.onScreenId));
+}
+
+function* onComponentSelected(action) {
+  yield put(componentTreeOnScreenScrollToTreeItem(action.id));
+}
+
+function scrollToTreeItem(action) {
+  // таймаут чтобы сработало после раскрытия дерева до нужного элемента
+  setTimeout(() => {
+    const elem = document.querySelector(`.treeItem-${action.id}`);
+    if (elem) {
+      scrollIntoView(elem, {
+        time: 1500,
+        validTarget: target => target !== window,
+      });
+    }
+  }, 0);
 }
 
 
-function* watchOnScreenToggleComponent() {
-  yield takeEvery(ONSCREEN_TOGGLE_COMPONENT, toggleOnScreen);
+function* watchOnScreenSelectComponent() {
+  yield takeEvery(ONSCREEN_SELECT_COMPONENT, onScreenSelectComponent);
 }
+
+function* watchScrollTo() {
+  yield takeEvery(COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.SCROLL_TO_TREE_ITEM, scrollToTreeItem);
+}
+
+function* watchComponentSelected() {
+  yield takeEvery(COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.SELECT_COMPONENT, onComponentSelected);
+}
+
 
 export default function* rootSaga() {
   yield all([
-    watchOnScreenToggleComponent(),
+    watchOnScreenSelectComponent(),
+    watchComponentSelected(),
+    watchScrollTo(),
   ]);
 }

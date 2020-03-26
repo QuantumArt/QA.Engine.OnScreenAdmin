@@ -3,7 +3,7 @@ import { getComponentTreeSelector, getMaxNestLevelSelector, getSelectedComponent
 import { getShowAllZones, getShowAllWidgets } from 'selectors/componentsHighlight';
 import { getSidebarSide } from 'selectors/sidebar';
 import EditComponentTree from 'Components/EditComponentTree';
-import onScreenToggleComponent from 'actions/editComponentTreeActions';
+import onScreenSelectComponent from 'actions/editComponentTreeActions';
 
 const mapStateToProps = state => ({
   components: getComponentTreeSelector(state),
@@ -16,7 +16,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   toggleComponent: (onScreenId) => {
-    dispatch(onScreenToggleComponent(onScreenId));
+    dispatch(onScreenSelectComponent(onScreenId));
   },
 });
 

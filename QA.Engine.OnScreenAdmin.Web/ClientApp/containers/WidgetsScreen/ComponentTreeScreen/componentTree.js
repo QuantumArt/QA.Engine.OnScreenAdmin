@@ -9,7 +9,7 @@ import {
 } from 'selectors/componentTree';
 import ComponentTree from 'Components/WidgetsScreen/ComponentTreeScreen/ComponentTree';
 import { finishMovingWidget, movingWidgetSelectTargetZone } from '../../../actions/moveWidgetActions';
-import { toggleComponent, toggleFullSubtree, toggleSubtree } from '../../../actions/componentTree/actions';
+import { toggleComponent, componentTreeOnScreenOpenFullSubtree, toggleSubtree } from '../../../actions/componentTree/actions';
 
 const mapStateToProps = state => ({
   components: getTreeDataSelector(state),
@@ -27,9 +27,6 @@ const mapDispatchToProps = dispatch => ({
   },
   onToggleSubtree: (id) => {
     dispatch(toggleSubtree(id));
-  },
-  onToggleFullSubtree: (id) => {
-    dispatch(toggleFullSubtree(id));
   },
   onFinishMovingWidget: (id) => {
     dispatch(finishMovingWidget(id));

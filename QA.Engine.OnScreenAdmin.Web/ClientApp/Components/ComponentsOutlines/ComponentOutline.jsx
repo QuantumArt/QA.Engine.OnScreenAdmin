@@ -16,7 +16,7 @@ const styles = () => ({
   },
 });
 
-function ComponentOutline({ showAllZones, showAllWidgets, coords, component, classes }) {
+function ComponentOutline({ showAllZones, showAllWidgets, coords, component, classes, onSelectComponent }) {
   let inlineStyles = {
     top: `${coords.top}px`,
     left: `${coords.left}px`,
@@ -36,22 +36,7 @@ function ComponentOutline({ showAllZones, showAllWidgets, coords, component, cla
     <div
       tabIndex={0}
       role="button"
-      onClick={() => {
-        console.log(`Добавить обработку выбора элемента: ${component.type} ${component.onScreenId}`);
-        const elem = document.querySelector(`.treeItem-${component.onScreenId}`);
-        console.log('elem', elem);
-        scrollIntoView(elem, {
-          time: 1500,
-          validTarget: (target, parentsScrolled) => {
-            console.log('validTarget call', { target, parentsScrolled, className: target.className });
-            // return target.className === 'Sidebar-sidebar-1';
-            return target !== window;
-          }
-
-          ,
-        });
-      }
-      }
+      onClick={() => onSelectComponent(component.onScreenId)}
       className={`${classes.highlightsItem} component--${component.onScreenId}`}
       style={inlineStyles}
     />
@@ -64,6 +49,7 @@ ComponentOutline.propTypes = {
   coords: PropTypes.object.isRequired,
   component: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
+  onSelectComponent: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(ComponentOutline);

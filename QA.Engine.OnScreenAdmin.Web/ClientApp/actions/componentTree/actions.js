@@ -1,23 +1,25 @@
 import {
-  CHANGE_COMPONENT_TREE_SEARCH_TEXT, COMPONENTS_LIST_UPDATE_REQUESTED, COMPONENTS_LIST_UPDATED,
+  CHANGE_COMPONENT_TREE_SEARCH_TEXT,
+  COMPONENTS_LIST_UPDATE_REQUESTED,
+  COMPONENTS_LIST_UPDATED,
   TOGGLE_COMPONENT,
   TOGGLE_COMPONENT_TREE_SEARCH_BOX,
-  TOGGLE_FULL_SUBTREE,
   TOGGLE_SHOW_ONLY_WIDGETS,
-  TOGGLE_SUBTREE, TREE_DATA_UPDATE_REQUESTED, TREE_DATA_UPDATED,
-  UPDATE_COMPONENTS, UPDATE_TREE_DATA,
+  TOGGLE_SUBTREE,
+  TREE_DATA_UPDATE_REQUESTED,
+  TREE_DATA_UPDATED,
+  UPDATE_COMPONENTS,
+  UPDATE_TREE_DATA,
+  COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT,
 } from './actionTypes';
 
 export function toggleComponent(id) {
   return { type: TOGGLE_COMPONENT, id };
 }
 
+
 export function toggleSubtree(id) {
   return { type: TOGGLE_SUBTREE, id };
-}
-
-export function toggleFullSubtree(id) {
-  return { type: TOGGLE_FULL_SUBTREE, id };
 }
 
 export function changeSearchText(newValue) {
@@ -54,4 +56,16 @@ export function updateTreeData(treeData) {
 
 export function treeDataUpdated() {
   return { type: TREE_DATA_UPDATED };
+}
+
+export function componentTreeOnScreenOpenFullSubtree(id) {
+  return { type: COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.OPEN_FULL_SUBTREE, id };
+}
+
+export function componentTreeOnScreenSelectComponent(id) {
+  return { type: COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.SELECT_COMPONENT, id };
+}
+
+export function componentTreeOnScreenScrollToTreeItem(id) {
+  return { type: COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.SCROLL_TO_TREE_ITEM, id };
 }
