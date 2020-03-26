@@ -52,7 +52,6 @@ class ComponentTree extends Component {
     selectedComponentId: PropTypes.string.isRequired,
     onToggleComponent: PropTypes.func.isRequired,
     onToggleSubtree: PropTypes.func.isRequired,
-    onToggleFullSubtree: PropTypes.func.isRequired,
     isMovingWidget: PropTypes.bool.isRequired,
     onMovingWidgetSelectTargetZone: PropTypes.func.isRequired,
     showOnlyWidgets: PropTypes.bool.isRequired,
@@ -85,7 +84,6 @@ class ComponentTree extends Component {
       isMovingWidget,
       onMovingWidgetSelectTargetZone,
       onToggleComponent,
-      onToggleFullSubtree,
       onToggleSubtree,
       selectedComponentId,
     } = this.props;
@@ -103,7 +101,6 @@ class ComponentTree extends Component {
           onMovingWidgetSelectTargetZone={onMovingWidgetSelectTargetZone}
           selectedComponentId={selectedComponentId}
           onToggleComponent={onToggleComponent}
-          onToggleFullSubtree={onToggleFullSubtree}
           onToggleSubtree={onToggleSubtree}
         />
       </div>

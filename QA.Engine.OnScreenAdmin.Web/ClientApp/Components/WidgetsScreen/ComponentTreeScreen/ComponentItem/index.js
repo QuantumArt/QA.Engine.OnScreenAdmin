@@ -95,7 +95,6 @@ class ComponentItem extends Component {
   static propTypes = {
     treeItem: PropTypes.objectOf(treeItemProps).isRequired,
     onToggleComponent: PropTypes.func.isRequired,
-    onToggleFullSubtree: PropTypes.func.isRequired,
     onToggleSubtree: PropTypes.func.isRequired,
     onMovingWidgetSelectTargetZone: PropTypes.func.isRequired,
     selectedComponentId: PropTypes.string.isRequired,
@@ -134,11 +133,7 @@ class ComponentItem extends Component {
     }
   };
 
-  handleOnScreenToggleClick = () => {
-    const { treeItem: { data: { onScreenId } } } = this.props;
-    this.handleToggleClick();
-    this.props.onToggleFullSubtree(onScreenId);
-  };
+
 
   handleSubtreeClick = () => {
     const { treeItem: { data: { onScreenId } } } = this.props;
