@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import scrollToElement from 'scroll-to-element';
+import scrollIntoView from 'scroll-into-view';
 
 const styles = () => ({
   highlightsItem: {
@@ -34,7 +36,22 @@ function ComponentOutline({ coords, component, classes }) {
     <div
       tabIndex={0}
       role="button"
-      onClick={() => console.log(`Добавить обработку выбора элемента: ${component.type} ${component.onScreenId}`)}
+      onClick={() => {
+        console.log(`Добавить обработку выбора элемента: ${component.type} ${component.onScreenId}`);
+        const elem = document.querySelector(`.treeItem-${component.onScreenId}`);
+        console.log('elem', elem);
+        scrollIntoView(elem, {
+          time: 1500,
+          validTarget: (target, parentsScrolled) => {
+            console.log('validTarget call', { target, parentsScrolled, className: target.className });
+            // return target.className === 'Sidebar-sidebar-1';
+            return target !== window;
+          }
+
+          ,
+        });
+      }
+      }
       className={`${classes.highlightsItem} component--${component.onScreenId}`}
       style={inlineStyles}
     />

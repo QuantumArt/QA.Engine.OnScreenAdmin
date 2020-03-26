@@ -62,12 +62,20 @@ class ComponentTree extends Component {
     isHovered: false,
   };
 
-  onExpand = () => {
-    console.log('onExpand');
-  };
+
+  componentDidMount() {
+    console.log('tree did mount');
+  }
+  componentDidUpdate() {
+    console.log('tree did update');
+  }
 
   onCollapse = () => {
     console.log('onCollapse');
+  };
+
+  onExpand = () => {
+    console.log('onExpand');
   };
 
 
@@ -101,6 +109,7 @@ class ComponentTree extends Component {
       </div>
     );
   };
+
 
   render() {
     const { components, isMovingWidget } = this.props;

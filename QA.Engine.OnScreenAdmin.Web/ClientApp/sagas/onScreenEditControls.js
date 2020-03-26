@@ -1,7 +1,7 @@
 import scrollToElement from 'scroll-to-element';
 import { put, takeEvery, all } from 'redux-saga/effects';
-import { ONSCREEN_TOGGLE_COMPONENT} from '../actions/actionTypes';
-import {TOGGLE_COMPONENT, TOGGLE_FULL_SUBTREE} from "../actions/componentTree/actionTypes";
+import { ONSCREEN_TOGGLE_COMPONENT } from '../actions/actionTypes';
+import { TOGGLE_COMPONENT, TOGGLE_FULL_SUBTREE } from '../actions/componentTree/actionTypes';
 
 function* toggleOnScreen(action) {
   yield put({ type: TOGGLE_COMPONENT, id: action.onScreenId });

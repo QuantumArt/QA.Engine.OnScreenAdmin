@@ -84,6 +84,7 @@ export default function buildTreeData(
   const _list = _.cloneDeep(list);
 
   const storedState = getSubtreeState();
+  console.log(storedState);
 
   const treeItems = _list.map(x => ({
     id: x.onScreenId,

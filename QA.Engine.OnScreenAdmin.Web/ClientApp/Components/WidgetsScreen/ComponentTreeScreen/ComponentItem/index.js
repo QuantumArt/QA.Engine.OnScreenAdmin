@@ -146,15 +146,6 @@ class ComponentItem extends Component {
   };
 
 
-  // hasChildWidgets = (children) => {
-  //   if (!children || children.length === 0) {
-  //     return false;
-  //   }
-  //
-  //   return _.some(children, c => c.type === 'widget' || this.hasChildWidgets(c.children));
-  // };
-
-
   renderContextMenu = (isSelected) => {
     const { isMovingWidget, treeItem: { data: { onScreenId } } } = this.props;
     if (!isSelected || isMovingWidget) {
@@ -271,24 +262,26 @@ class ComponentItem extends Component {
     const isSelected = selectedComponentId === onScreenId;
 
     return (
-      <ListItem
-        disabled={isDisabled}
-        classes={{
-          root: classes.listItem,
-          secondaryAction: classes.listItemSecondaryAction,
-        }}
-        // style={{ paddingLeft: itemLevel > 1 ? `${itemLevel * 1}em` : '16px' }}
-        onClick={this.handleToggleClick}
-        ContainerComponent={'div'}
-        button
-      >
-        {this.renderListItemIcon(type, iconSrc, isNew, isSelected, classes)}
-        {this.renderListItemTextWrapper(primaryText, isSelected, classes)}
-        <ListItemSecondaryAction>
-          {this.renderContextMenu(isSelected)}
-          {this.renderCollapseButton(isExpanded, hasChildren, classes)}
-        </ListItemSecondaryAction>
-      </ListItem>
+      <div className={`treeItem-${onScreenId}`}>
+        <ListItem
+          disabled={isDisabled}
+          classes={{
+            root: classes.listItem,
+            secondaryAction: classes.listItemSecondaryAction,
+          }}
+          // style={{ paddingLeft: itemLevel > 1 ? `${itemLevel * 1}em` : '16px' }}
+          onClick={this.handleToggleClick}
+          ContainerComponent={'div'}
+          button
+        >
+          {this.renderListItemIcon(type, iconSrc, isNew, isSelected, classes)}
+          {this.renderListItemTextWrapper(primaryText, isSelected, classes)}
+          <ListItemSecondaryAction>
+            {this.renderContextMenu(isSelected)}
+            {this.renderCollapseButton(isExpanded, hasChildren, classes)}
+          </ListItemSecondaryAction>
+        </ListItem>
+      </div>
     );
   };
 
