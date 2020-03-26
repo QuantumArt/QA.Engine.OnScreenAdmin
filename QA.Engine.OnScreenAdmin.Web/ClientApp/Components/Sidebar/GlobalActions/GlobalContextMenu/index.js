@@ -30,19 +30,19 @@ class GlobalContextMenu extends Component {
     const { addWidgetToPage } = this.props;
     this.handleRequestClose();
     addWidgetToPage();
-  }
+  };
 
   handleToggleShowOnlyWidgets = () => {
     const { toggleShowOnlyWidgets } = this.props;
     this.handleRequestClose();
     toggleShowOnlyWidgets();
-  }
+  };
 
   handleEditPage = () => {
     const { editPage } = this.props;
     this.handleRequestClose();
     editPage();
-  }
+  };
 
   render() {
     const {
@@ -104,7 +104,6 @@ class GlobalContextMenu extends Component {
   }
 }
 
-//
 
 GlobalContextMenu.propTypes = {
   enabledMenuKeys: PropTypes.array.isRequired,

@@ -4,8 +4,6 @@ import { withStyles } from 'material-ui/styles';
 
 import Portal from 'Components/Portal';
 
-import buildFlatList from 'utils/buildFlatList';
-
 import ComponentOutline from './ComponentOutline';
 
 const styles = () => ({
@@ -27,13 +25,11 @@ class ComponentsOutlines extends Component {
   }
 
   update = () => {
-    const { updateComponents } = this.props;
-    const components = buildFlatList();
-    updateComponents(components);
-  }
+    this.props.requestUpdateComponents();
+  };
 
   render() {
-    const { showAllZones, showAllWidgets, showOnlyWidgets, components, classes } = this.props;
+    const { showAllZones, showAllWidgets, showOnlyWidgets, components, classes, onSelectComponent } = this.props;
 
     return (
       <Portal>
@@ -59,6 +55,7 @@ class ComponentsOutlines extends Component {
                 showAllWidgets={showAllWidgets}
                 coords={coords}
                 component={component}
+                onSelectComponent={onSelectComponent}
               />
             );
           })}
@@ -73,8 +70,9 @@ ComponentsOutlines.propTypes = {
   showAllWidgets: PropTypes.bool.isRequired,
   showOnlyWidgets: PropTypes.bool.isRequired,
   components: PropTypes.arrayOf(PropTypes.object).isRequired,
-  updateComponents: PropTypes.func.isRequired,
+  requestUpdateComponents: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
+  onSelectComponent: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(ComponentsOutlines);

@@ -1,12 +1,11 @@
 import MutationSummary from 'mutation-summary';
 import _ from 'lodash';
-import { updateComponents } from 'actions/componentTreeActions';
-import buildFlatList from 'utils/buildFlatList';
+import { requestComponentsListUpdate } from 'actions/componentTree/actions';
 
 function MutationWatcher(store) {
   const mutationCallback = (summaries) => {
-    const newComponentTree = buildFlatList();
-    store.dispatch(updateComponents(newComponentTree));
+    // const newComponentTree = buildFlatList();
+    store.dispatch(requestComponentsListUpdate());
   };
 
   /* eslint-disable no-new */

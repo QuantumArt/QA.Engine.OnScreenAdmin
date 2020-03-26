@@ -58,7 +58,7 @@ const styles = theme => ({
   },
 });
 
-const Sidebar = (props) => {
+function Sidebar(props) {
   const {
     opened,
     side,
@@ -75,7 +75,6 @@ const Sidebar = (props) => {
     featuresCount,
     cords,
   } = props;
-
 
   return (
     <div className={classes.sidebar}>
@@ -94,7 +93,7 @@ const Sidebar = (props) => {
         anchor={side}
       >
         <Scrollbars autoHide>
-          <Toolbar disableGutters classes={{ root: classes.topToolbar }} >
+          <Toolbar disableGutters classes={{ root: classes.topToolbar }}>
             <div className={classes.topLeftRoot}>
               <GlobalActions />
             </div>
@@ -126,13 +125,13 @@ const Sidebar = (props) => {
           </Toolbar>
           <Divider />
           {showTabs &&
-            <TabsToolbar
-              widgetTabAvailable={widgetTabAvailable}
-              abTestsTabAvailable={abTestsTabAvailable}
-              featuresCount={featuresCount}
-              toggleTab={toggleTab}
-              activeTab={activeTab}
-            />
+          <TabsToolbar
+            widgetTabAvailable={widgetTabAvailable}
+            abTestsTabAvailable={abTestsTabAvailable}
+            featuresCount={featuresCount}
+            toggleTab={toggleTab}
+            activeTab={activeTab}
+          />
           }
           <Screens
             widgetTabAvailable={widgetTabAvailable}
@@ -140,11 +139,12 @@ const Sidebar = (props) => {
             activeTab={activeTab}
           />
         </Scrollbars>
+
       </Drawer>
       {opened && <ComponentsOutlines />}
     </div>
   );
-};
+}
 
 Sidebar.propTypes = {
   opened: PropTypes.bool.isRequired,
@@ -154,6 +154,7 @@ Sidebar.propTypes = {
   toggleLeft: PropTypes.func.isRequired,
   toggleRight: PropTypes.func.isRequired,
   toggleTab: PropTypes.func.isRequired,
+  updateComponents: PropTypes.func.isRequired,
   cords: PropTypes.object.isRequired,
   saveCords: PropTypes.func.isRequired,
   showTabs: PropTypes.bool.isRequired,

@@ -11,10 +11,11 @@ import watchWidgetCreationWizard from './widgetCreationWizardSagas';
 import watchWidgetScreen from './widgetScreenSagas';
 import watchEditPage from './editPageSagas';
 import watchEditArticle from './editArticleSagas';
-
+import watchComponentsList from './componentsListSagas';
 
 export default function* rootSaga() {
   yield all([
+    watchComponentsList(),
     watchSubtreeToggle(),
     watchEditWidgetSaga(),
     watchEditArticle(),

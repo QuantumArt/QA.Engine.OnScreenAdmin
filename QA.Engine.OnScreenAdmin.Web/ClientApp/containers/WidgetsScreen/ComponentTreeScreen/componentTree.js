@@ -2,22 +2,17 @@ import { connect } from 'react-redux';
 import {
   getMaxNestLevelSelector,
   getSelectedComponentIdSelector,
-  filteredComponentTree,
+  // filteredComponentTree,
   getDisabledComponentsSelector,
   getIsMovingWidgetSelector,
-  getShowOnlyWidgetsSelector,
+  getShowOnlyWidgetsSelector, getTreeDataSelector,
 } from 'selectors/componentTree';
-import {
-  toggleComponent,
-  toggleSubtree,
-  toggleFullSubtree,
-  finishMovingWidget,
-  movingWidgetSelectTargetZone,
-} from 'actions/componentTreeActions';
 import ComponentTree from 'Components/WidgetsScreen/ComponentTreeScreen/ComponentTree';
+import { finishMovingWidget, movingWidgetSelectTargetZone } from '../../../actions/moveWidgetActions';
+import { toggleComponent, componentTreeOnScreenOpenFullSubtree, toggleSubtree } from '../../../actions/componentTree/actions';
 
 const mapStateToProps = state => ({
-  components: filteredComponentTree(state),
+  components: getTreeDataSelector(state),
   maxNestLevel: getMaxNestLevelSelector(state),
   selectedComponentId: getSelectedComponentIdSelector(state),
   searchText: state.sidebar.widgetScreenSearchText,
@@ -32,9 +27,6 @@ const mapDispatchToProps = dispatch => ({
   },
   onToggleSubtree: (id) => {
     dispatch(toggleSubtree(id));
-  },
-  onToggleFullSubtree: (id) => {
-    dispatch(toggleFullSubtree(id));
   },
   onFinishMovingWidget: (id) => {
     dispatch(finishMovingWidget(id));

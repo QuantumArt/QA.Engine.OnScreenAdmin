@@ -1,12 +1,11 @@
 import { connect } from 'react-redux';
 
 import ComponentsOutlines from 'Components/ComponentsOutlines';
+import { requestComponentsListUpdate } from 'actions/componentTree/actions';
 
 import { getShowAllZones, getShowAllWidgets } from 'selectors/componentsHighlight';
 import { getComponentsListSelector, getShowOnlyWidgetsSelector } from 'selectors/componentTree';
-
-import { updateComponents } from 'actions/componentTreeActions';
-
+import onScreenSelectComponent from '../actions/editComponentTreeActions';
 
 const mapStateToProps = state => ({
   showOnlyWidgets: getShowOnlyWidgetsSelector(state),
@@ -16,7 +15,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  updateComponents: components => dispatch(updateComponents(components)),
+  requestUpdateComponents: () => { dispatch(requestComponentsListUpdate()); },
+  onSelectComponent: (id) => { dispatch(onScreenSelectComponent(id)); },
 });
 
 const ComponentsOutlinesContainer = connect(

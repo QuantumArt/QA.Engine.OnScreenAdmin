@@ -1,22 +1,19 @@
+import _ from 'lodash';
+import { mutateTree } from '@atlaskit/tree';
 import {
-  TOGGLE_COMPONENT,
-  TOGGLE_SUBTREE,
-  TOGGLE_FULL_SUBTREE,
-  CHANGE_COMPONENT_TREE_SEARCH_TEXT,
-  UPDATE_COMPONENTS,
-  TOGGLE_SHOW_ONLY_WIDGETS,
-  TOGGLE_COMPONENT_TREE_SEARCH_BOX,
-} from 'actions/actionTypes';
-import buildFlatList from 'utils/buildFlatList';
+  CHANGE_COMPONENT_TREE_SEARCH_TEXT, TOGGLE_COMPONENT,
+  TOGGLE_COMPONENT_TREE_SEARCH_BOX, OPEN_FULL_SUBTREE,
+  TOGGLE_SHOW_ONLY_WIDGETS, TOGGLE_SUBTREE,
+  UPDATE_COMPONENTS, UPDATE_TREE_DATA, COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT,
+} from '../actions/componentTree/actionTypes';
 
 
-const components = buildFlatList();
 const getMaxNestLevel = comps => comps.map(c => c.nestLevel).reduce((max, cur) => Math.max(max, cur));
 
 const initialState = {
   selectedComponentId: '',
-  components,
-  maxNestLevel: getMaxNestLevel(components),
+  components: [],
+  maxNestLevel: 0,
   searchText: '',
   showOnlyWidgets: false,
   showSearchBox: false,
@@ -25,6 +22,7 @@ const initialState = {
 export default function componentTreeReducer(state = initialState, action) {
   switch (action.type) {
     case UPDATE_COMPONENTS:
+      console.log('update components', action);
       return {
         ...state,
         components: action.components,
@@ -41,55 +39,42 @@ export default function componentTreeReducer(state = initialState, action) {
           ? ''
           : action.id,
       };
-    case TOGGLE_SUBTREE:
+    case TOGGLE_SUBTREE: {
+      const node = _.find(state.treeData.items, { id: action.id });
+      const prevState = node && node.isExpanded;
       return {
         ...state,
-        components: state.components.map(component =>
-          (component.onScreenId === action.id
-            ? { ...component, isOpened: !component.isOpened }
-            : component),
-        ),
-      };
-    case TOGGLE_FULL_SUBTREE: {
-      const getParentId = (id) => {
-        const arr = id.split(';');
-
-        return arr.slice(0, arr.length - 1).join(';');
-      };
-
-      const checkIfLastParent = (id) => {
-        const arr = id.split(';');
-
-        return arr.length < 2;
-      };
-
-      const componentsToEdit = [];
-      const getIds = (id) => {
-        const newId = getParentId(id);
-        if (!checkIfLastParent(id)) {
-          state.components.forEach((component) => {
-            if (component.onScreenId === id) {
-              componentsToEdit.push(component.onScreenId);
-            }
-          });
-          getIds(newId);
-        }
-      };
-      state.components.forEach((component) => {
-        if (component.onScreenId === action.id) {
-          getIds(component.onScreenId);
-        }
-      });
-
-      return {
-        ...state,
-        components: state.components.map(component =>
-          (componentsToEdit.indexOf(component.onScreenId) !== -1
-            ? { ...component, isOpened: true }
-            : { ...component, isOpened: false }),
-        ),
+        treeData: mutateTree(state.treeData, action.id, { isExpanded: !prevState }),
       };
     }
+    case COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.OPEN_FULL_SUBTREE: {
+      const onScreenId = action.id;
+      let parentTreeItem = _.find(state.treeData.items, i => _.includes(i.children, onScreenId));
+      let treeData = state.treeData;
+      while (parentTreeItem && parentTreeItem.id !== 'root') {
+        if (!parentTreeItem.isExpanded) {
+          treeData = mutateTree(treeData, parentTreeItem.id, { isExpanded: true });
+        }
+        // eslint-disable-next-line no-loop-func
+        parentTreeItem = _.find(state.treeData.items, i => _.includes(i.children, parentTreeItem.id));
+      }
+      return {
+        ...state,
+        treeData,
+      };
+    }
+    case COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.SELECT_COMPONENT:
+      return {
+        ...state,
+        components: state.components.map(component => (component.onScreenId === action.id
+          ? ({ ...component, isSelected: true })
+          : ({ ...component, isSelected: false })
+        )),
+        selectedComponentId: action.id,
+
+      };
+
+
     case CHANGE_COMPONENT_TREE_SEARCH_TEXT:
       return {
         ...state,
@@ -105,6 +90,12 @@ export default function componentTreeReducer(state = initialState, action) {
         ...state,
         showSearchBox: !state.showSearchBox,
         searchText: '',
+      };
+
+    case UPDATE_TREE_DATA:
+      return {
+        ...state,
+        treeData: action.treeData,
       };
     default:
       return state;

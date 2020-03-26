@@ -1,6 +1,6 @@
 import { select, put, takeEvery, all } from 'redux-saga/effects';
 import _ from 'lodash';
-import { EDIT_ARTICLE_ACTIONS, CONTENT_META_INFO_ACTION } from 'actions/actionTypes';
+import { EDIT_ARTICLE_ACTIONS } from 'actions/actionTypes';
 import { qpFormCallback } from './qpFormSagas';
 
 import { editArticle as editArticleQpForm } from '../articleManagement';
@@ -21,7 +21,6 @@ function* editArticle() {
 function* watchEditArticle() {
   yield takeEvery(EDIT_ARTICLE_ACTIONS.EDIT_ARTICLE, editArticle);
 }
-
 
 
 export default function* rootSaga() {
