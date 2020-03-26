@@ -1,12 +1,18 @@
 import { connect } from 'react-redux';
-import { getComponentsListSelector, getShowOnlyWidgetsSelector } from 'selectors/componentTree';
+
 import ComponentsOutlines from 'Components/ComponentsOutlines';
+
+import { getShowAllZones, getShowAllWidgets } from 'selectors/componentsHighlight';
+import { getComponentsListSelector, getShowOnlyWidgetsSelector } from 'selectors/componentTree';
+
 import { updateComponents } from 'actions/componentTreeActions';
 
 
 const mapStateToProps = state => ({
-  components: getComponentsListSelector(state),
   showOnlyWidgets: getShowOnlyWidgetsSelector(state),
+  showAllZones: getShowAllZones(state),
+  showAllWidgets: getShowAllWidgets(state),
+  components: getComponentsListSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
