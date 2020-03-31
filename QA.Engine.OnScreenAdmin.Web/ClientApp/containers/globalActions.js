@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import { toggleAllWidgets, toggleAllZones } from 'actions/componentHighlightActions';
-import { getShowAllZones, getShowAllWidgets } from 'selectors/componentsHighlight';
+import { toggleAllWidgets, toggleAllZones, toggleZonesTitles } from 'actions/componentHighlightActions';
+import { getShowAllZones, getShowAllWidgets, getShowZonesTitles } from 'selectors/componentsHighlight';
 import { getEnabledMenuKeys } from 'selectors/globalContextMenu';
 import { getShowOnlyWidgetsSelector } from 'selectors/componentTree';
 import { beginWidgetCreation } from 'actions/widgetCreation/actions';
@@ -12,11 +12,12 @@ import { toggleShowOnlyWidgets } from '../actions/componentTree/actions';
 
 
 const mapStateToProps = state => ({
+  isIframe: checkIsIframe(),
+  showOnlyWidgets: getShowOnlyWidgetsSelector(state),
   showAllZones: getShowAllZones(state),
   showAllWidgets: getShowAllWidgets(state),
+  showZonesTitles: getShowZonesTitles(state),
   enabledMenuKeys: getEnabledMenuKeys(state),
-  showOnlyWidgets: getShowOnlyWidgetsSelector(state),
-  isIframe: checkIsIframe(),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -25,6 +26,9 @@ const mapDispatchToProps = dispatch => ({
   },
   toggleAllWidgets: () => {
     dispatch(toggleAllWidgets());
+  },
+  toggleZonesTitles: () => {
+    dispatch(toggleZonesTitles());
   },
   addWidgetToPage: () => {
     const payload = {

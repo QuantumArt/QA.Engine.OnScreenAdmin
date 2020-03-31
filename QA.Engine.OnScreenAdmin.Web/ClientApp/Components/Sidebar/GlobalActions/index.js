@@ -6,15 +6,17 @@ import GlobalContextMenu from './GlobalContextMenu';
 
 const GlobalActions = (props) => {
   const {
-    toggleAllWidgets,
-    toggleAllZones,
-    showAllWidgets,
+    isIframe,
+    showOnlyWidgets,
     showAllZones,
+    showAllWidgets,
+    showZonesTitles,
+    toggleAllZones,
+    toggleAllWidgets,
+    toggleZonesTitles,
     enabledMenuKeys,
     addWidgetToPage,
     toggleShowOnlyWidgets,
-    showOnlyWidgets,
-    isIframe,
     editPage,
   } = props;
 
@@ -32,23 +34,27 @@ const GlobalActions = (props) => {
         showOnlyWidgets={showOnlyWidgets}
         showAllWidgets={showAllWidgets}
         showAllZones={showAllZones}
+        showZonesTitles={showZonesTitles}
         toggleAllWidgets={toggleAllWidgets}
         toggleAllZones={toggleAllZones}
+        toggleZonesTitles={toggleZonesTitles}
       />
     </Fragment>
   );
 };
 
 GlobalActions.propTypes = {
+  isIframe: PropTypes.bool.isRequired,
+  showOnlyWidgets: PropTypes.bool.isRequired,
   showAllZones: PropTypes.bool.isRequired,
   showAllWidgets: PropTypes.bool.isRequired,
+  showZonesTitles: PropTypes.bool.isRequired,
   toggleAllZones: PropTypes.func.isRequired,
   toggleAllWidgets: PropTypes.func.isRequired,
+  toggleZonesTitles: PropTypes.func.isRequired,
   enabledMenuKeys: PropTypes.array.isRequired,
   addWidgetToPage: PropTypes.func.isRequired,
   toggleShowOnlyWidgets: PropTypes.func.isRequired,
-  showOnlyWidgets: PropTypes.bool.isRequired,
-  isIframe: PropTypes.bool.isRequired,
   editPage: PropTypes.func.isRequired,
 };
 
