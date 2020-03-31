@@ -1,9 +1,11 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import { lightBlue, green, grey } from 'material-ui/colors';
+import { Title } from 'material-ui-icons';
+
 import Button from 'material-ui/Button';
 import Tooltip from 'material-ui/Tooltip';
-import { lightBlue, green, grey } from 'material-ui/colors';
 import WidgetIcon from 'Components/Icons/Widget';
 import ZoneIcon from 'Components/Icons/Zone';
 
@@ -23,6 +25,9 @@ const styles = theme => ({
   widgetsButtonChecked: {
     color: lightBlue[400],
   },
+  zonesTitlesChecked: {
+    color: green[400],
+  },
   buttonUnchecked: {
     color: grey[500],
   },
@@ -34,8 +39,10 @@ const ToggleButtons = (props) => {
     showOnlyWidgets,
     showAllZones,
     showAllWidgets,
+    showZonesTitles,
     toggleAllZones,
     toggleAllWidgets,
+    toggleZonesTitles,
     classes,
   } = props;
 
@@ -51,19 +58,28 @@ const ToggleButtons = (props) => {
           <WidgetIcon />
         </Button>
       </Tooltip>
-      {!showOnlyWidgets &&
-        (
-          <Tooltip id="zonesTooltip" title="Highlight zones" classes={{ tooltip: classes.tooltipRoot }} enterDelay={300}>
-            <Button
-              classes={{ root: classes.buttonRoot }}
-              onClick={toggleAllZones}
-              className={showAllZones ? classes.zonesButtonChecked : classes.buttonUnchecked}
-            >
-              <ZoneIcon />
-            </Button>
-          </Tooltip>
-        )}
-
+      {!showOnlyWidgets && (
+        <Tooltip id="zonesTooltip" title="Highlight zones" classes={{ tooltip: classes.tooltipRoot }} enterDelay={300}>
+          <Button
+            classes={{ root: classes.buttonRoot }}
+            onClick={toggleAllZones}
+            className={showAllZones ? classes.zonesButtonChecked : classes.buttonUnchecked}
+          >
+            <ZoneIcon />
+          </Button>
+        </Tooltip>
+      )}
+      {!showOnlyWidgets && (
+        <Tooltip id="zonesTitlesTooltip" title="Highlight zones titles" classes={{ tooltip: classes.tooltipRoot }} enterDelay={300}>
+          <Button
+            onClick={toggleZonesTitles}
+            classes={{ root: classes.buttonRoot }}
+            className={showZonesTitles ? classes.zonesTitlesChecked : classes.buttonUnchecked}
+          >
+            <Title />
+          </Button>
+        </Tooltip>
+      )}
     </Fragment>
   );
 };
@@ -72,8 +88,10 @@ ToggleButtons.propTypes = {
   showOnlyWidgets: PropTypes.bool.isRequired,
   showAllZones: PropTypes.bool.isRequired,
   showAllWidgets: PropTypes.bool.isRequired,
+  showZonesTitles: PropTypes.bool.isRequired,
   toggleAllZones: PropTypes.func.isRequired,
   toggleAllWidgets: PropTypes.func.isRequired,
+  toggleZonesTitles: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
 
