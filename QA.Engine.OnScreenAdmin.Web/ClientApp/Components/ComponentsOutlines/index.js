@@ -29,7 +29,15 @@ class ComponentsOutlines extends Component {
   };
 
   render() {
-    const { showAllZones, showAllWidgets, showOnlyWidgets, components, classes, onSelectComponent } = this.props;
+    const {
+      showOnlyWidgets,
+      showAllZones,
+      showAllWidgets,
+      showZonesTitles,
+      components,
+      classes,
+      onSelectComponent,
+    } = this.props;
 
     return (
       <Portal>
@@ -53,6 +61,7 @@ class ComponentsOutlines extends Component {
                 key={component.onScreenId}
                 showAllZones={showAllZones}
                 showAllWidgets={showAllWidgets}
+                showZonesTitles={showZonesTitles}
                 coords={coords}
                 component={component}
                 onSelectComponent={onSelectComponent}
@@ -66,9 +75,10 @@ class ComponentsOutlines extends Component {
 }
 
 ComponentsOutlines.propTypes = {
+  showOnlyWidgets: PropTypes.bool.isRequired,
   showAllZones: PropTypes.bool.isRequired,
   showAllWidgets: PropTypes.bool.isRequired,
-  showOnlyWidgets: PropTypes.bool.isRequired,
+  showZonesTitles: PropTypes.bool.isRequired,
   components: PropTypes.arrayOf(PropTypes.object).isRequired,
   requestUpdateComponents: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
