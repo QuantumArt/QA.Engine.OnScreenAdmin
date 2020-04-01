@@ -8,6 +8,7 @@ import availableWidgets from './availableWidgetsReducer';
 import articleManagement from './articleManagementReducer';
 import abTestingScreen from './abTestingScreenReducer';
 import widgetCreation from './widgetCreationWizardReducer';
+import notification from './notificatonReducer';
 
 const rootReducer = combineReducers({
   sidebar,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   availableWidgets,
   articleManagement,
   widgetCreation,
+  notification,
 });
 
 export default rootReducer;
