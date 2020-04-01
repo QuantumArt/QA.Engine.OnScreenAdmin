@@ -28,7 +28,7 @@ const treeItemDataProps = PropTypes.shape({
 });
 
 const treeItemProps = PropTypes.shape({
-  id: PropTypes.string.isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   children: PropTypes.arrayOf(PropTypes.string).isRequired,
   hasChildren: PropTypes.bool.isRequired,
   isExpanded: PropTypes.bool.isRequired,
@@ -93,13 +93,26 @@ const styles = theme => ({
 
 class ComponentItem extends Component {
   static propTypes = {
-    treeItem: PropTypes.objectOf(treeItemProps).isRequired,
+    treeItem: PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      children: PropTypes.arrayOf(PropTypes.string).isRequired,
+      hasChildren: PropTypes.bool.isRequired,
+      isExpanded: PropTypes.bool.isRequired,
+      data: PropTypes.shape({
+        onScreenId: PropTypes.string.isRequired,
+        type: PropTypes.oneOf([ELEMENT_TYPE.WIDGET, ELEMENT_TYPE.ZONE, ELEMENT_TYPE.ARTICLE]).isRequired,
+        primaryText: PropTypes.string.isRequired,
+        iconSrc: PropTypes.string,
+        isDisabled: PropTypes.bool,
+      }),
+    }).isRequired,
     onToggleComponent: PropTypes.func.isRequired,
-    onToggleSubtree: PropTypes.func.isRequired,
     onMovingWidgetSelectTargetZone: PropTypes.func.isRequired,
     selectedComponentId: PropTypes.string.isRequired,
     isMovingWidget: PropTypes.bool.isRequired,
     classes: PropTypes.object.isRequired,
+    onExpand: PropTypes.func.isRequired,
+    onCollapse: PropTypes.func.isRequired,
 
 
   };
@@ -134,10 +147,13 @@ class ComponentItem extends Component {
   };
 
 
-
   handleSubtreeClick = () => {
-    const { treeItem: { data: { onScreenId } } } = this.props;
-    this.props.onToggleSubtree(onScreenId);
+    const { treeItem: { isExpanded, data: { onScreenId } }, onCollapse, onExpand } = this.props;
+    if (isExpanded) {
+      onCollapse(onScreenId);
+    } else {
+      onExpand(onScreenId);
+    }
   };
 
 
@@ -160,19 +176,6 @@ class ComponentItem extends Component {
       }}
     />
   );
-
-
-  // renderSecondaryText = (type, properties) => {
-  //   if (type === 'zone') {
-  //     let zoneSettings = '';
-  //     if (properties.isRecursive) zoneSettings += ' recursive';
-  //     if (properties.isGlobal) zoneSettings += ' global';
-  //
-  //     return zoneSettings === '' ? 'zone' : `${type}:${zoneSettings}`;
-  //   }
-  //
-  //   return `${type}: ID - ${properties.widgetId}`;
-  // };
 
 
   renderListItemTextWrapper = (primaryText, isSelected, classes) => {

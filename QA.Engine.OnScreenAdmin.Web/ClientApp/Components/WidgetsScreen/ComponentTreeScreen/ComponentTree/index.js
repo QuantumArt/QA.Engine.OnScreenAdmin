@@ -1,10 +1,11 @@
 import Tree from '@atlaskit/tree';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd-next';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd-next';
 
 
 import ComponentItem from '../ComponentItem';
+import { ELEMENT_TYPE } from '../../../../constants/elementTypes';
 
 
 class PatchTree extends Tree {
@@ -55,6 +56,8 @@ class ComponentTree extends Component {
     isMovingWidget: PropTypes.bool.isRequired,
     onMovingWidgetSelectTargetZone: PropTypes.func.isRequired,
     showOnlyWidgets: PropTypes.bool.isRequired,
+    onExpand: PropTypes.func.isRequired,
+    onCollapse: PropTypes.func.isRequired,
   };
 
   state = {
@@ -69,39 +72,55 @@ class ComponentTree extends Component {
     console.log('tree did update');
   }
 
-  onCollapse = () => {
-    console.log('onCollapse');
+
+  onDragStart = (itemId) => {
+    console.log('drag start', itemId);
   };
 
-  onExpand = () => {
-    console.log('onExpand');
+  onDragEnd = (source, destination) => {
+    console.log('drag end', { source, destination });
   };
 
+  isDragAllowed = itemData => itemData.type !== ELEMENT_TYPE.ZONE;
 
-  renderItem = ({ item, provided }) => {
+
+  renderItem = ({ item, provided, snapshot }) => {
     // console.log('render item called', item);
     const {
       isMovingWidget,
       onMovingWidgetSelectTargetZone,
       onToggleComponent,
-      onToggleSubtree,
       selectedComponentId,
+      onExpand,
+      onCollapse,
     } = this.props;
 
-    const newDraggableProps = {
-      ...provided.draggableProps,
-      // isDragDisabled: true,
-    };
+
+    // if (snapshot && snapshot.isDragging) {
+    //   console.log(snapshot);
+    // }
+
+    // isDragDisabled не нашел как прикрутить в дерево, так что запрещаем таскать таким способом
+    const dragHandleProps = { ...provided.dragHandleProps };
+    if (!this.isDragAllowed(item.data)) {
+      dragHandleProps.onFocus = () => {};
+      dragHandleProps.onBlur = () => {};
+      dragHandleProps.onMouseDown = () => {};
+      dragHandleProps.onKeyDown = () => {};
+      dragHandleProps.onTouchStart = () => {};
+      dragHandleProps.draggable = false;
+    }
 
     return (
-      <div ref={provided.innerRef} {...newDraggableProps} {...provided.dragHandleProps}>
+      <div ref={provided.innerRef} {...provided.draggableProps} {...dragHandleProps}>
         <ComponentItem
           treeItem={item}
           isMovingWidget={isMovingWidget}
           onMovingWidgetSelectTargetZone={onMovingWidgetSelectTargetZone}
           selectedComponentId={selectedComponentId}
           onToggleComponent={onToggleComponent}
-          onToggleSubtree={onToggleSubtree}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
         />
       </div>
     );
@@ -109,16 +128,18 @@ class ComponentTree extends Component {
 
 
   render() {
-    const { components, isMovingWidget } = this.props;
+    const { components, isMovingWidget, onCollapse, onExpand } = this.props;
     console.log('rendering tree', components);
     return (<PatchTree
       tree={components}
       renderItem={this.renderItem}
-      onExpand={this.onExpand}
-      onCollapse={this.onCollapse}
+      onExpand={onExpand}
+      onCollapse={onCollapse}
       offsetPerLevel={16}
       isDragEnabled={!isMovingWidget}
-
+      onDragStart={this.onDragStart}
+      onDragEnd={this.onDragEnd}
+      isNestingEnabled
     />);
   }
 }

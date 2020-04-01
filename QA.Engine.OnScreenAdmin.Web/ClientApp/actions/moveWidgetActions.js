@@ -11,3 +11,11 @@ export function finishMovingWidget(id) {
 export function movingWidgetSelectTargetZone(id) {
   return { type: EDIT_WIDGET_ACTIONS.MOVING_WIDGET_SELECT_TARGET_ZONE, id };
 }
+
+export function dragWidgetStart(id) {
+  return { type: EDIT_WIDGET_ACTIONS.DRAG_AND_DROP_WIDGET_START, payload: { onScreenId: id } };
+}
+
+export function dragWidgetEnd(source, destination) {
+  return { type: EDIT_WIDGET_ACTIONS.DRAG_AND_DROP_WIDGET_END, payload: { source, destination } };
+}
