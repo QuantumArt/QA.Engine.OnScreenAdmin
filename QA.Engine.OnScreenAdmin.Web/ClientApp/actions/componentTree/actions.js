@@ -11,16 +11,12 @@ import {
   UPDATE_TREE_DATA,
   COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT, EXPAND_SUBTREE, COLLAPSE_SUBTREE, DRAG_AND_DROP,
 } from './actionTypes';
-import {EDIT_WIDGET_ACTIONS} from "../actionTypes";
+
 
 export function toggleComponent(id) {
   return { type: TOGGLE_COMPONENT, id };
 }
 
-
-// export function toggleSubtree(id) {
-//   return { type: TOGGLE_SUBTREE, id };
-// }
 
 export function expandSubtree(id) {
   return { type: EXPAND_SUBTREE, id };
