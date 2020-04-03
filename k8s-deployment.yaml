@@ -19,12 +19,12 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConfigurationServiceUrl
+        - name: ConfigurationService__Url
           valueFrom:
             configMapKeyRef:
               name: qp-config
               key: CONFIGURATION_SERVICE_HOST
-        - name: ConfigurationServiceToken
+        - name: ConfigurationService__Token
           valueFrom:
             configMapKeyRef:
               name: qp-config
