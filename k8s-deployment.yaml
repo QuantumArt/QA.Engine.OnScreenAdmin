@@ -28,7 +28,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: qp-config
-              key: CONFIGURATION_SERVICE_TOKEN          
+              key: CONFIGURATION_SERVICE_TOKEN
         volumeMounts:
         - mountPath: /etc/localtime
           name: tz-config
@@ -50,4 +50,20 @@ spec:
   - port: 80
     targetPort: 80
   selector:
-    app: wp-onscreen                   
+    app: wp-onscreen
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  name: wp-onscreen
+  namespace: widget-platform
+spec:
+  rules:
+  - host: onscreen.widget-platform.dev.qsupport.ru
+    http:
+      paths:
+      - backend:
+          serviceName: wp-onscreen
+          servicePort: 80
