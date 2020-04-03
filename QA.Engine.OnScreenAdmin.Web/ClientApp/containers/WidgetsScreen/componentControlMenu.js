@@ -8,6 +8,7 @@ import checkIsIframe from 'utils/checkIsIframe';
 
 const mapStateToProps = (state, ownProps) => {
   const component = _.find(state.componentTree.components, { onScreenId: ownProps.onScreenId });
+
   const type = (component == null) ? '' : component.type;
   const zoneName = (type === 'zone') ? component.properties.zoneName : '';
   return {
@@ -41,7 +42,7 @@ const mapDispatchToProps = dispatch => ({
   },
   onEditArticle: (id) => {
     dispatch(editArticle(id));
-  }
+  },
 });
 
 const ComponentControlMenuContainer = connect(
