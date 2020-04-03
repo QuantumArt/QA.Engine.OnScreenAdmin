@@ -119,7 +119,6 @@ class ComponentOutline extends React.Component {
       itemInlineStyles = {
         ...itemInlineStyles,
         borderStyle: 'dashed',
-        opacity: '1',
       };
     }
 
