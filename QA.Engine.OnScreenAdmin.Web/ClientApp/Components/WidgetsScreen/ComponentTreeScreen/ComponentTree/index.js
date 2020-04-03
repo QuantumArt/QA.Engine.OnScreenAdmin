@@ -1,13 +1,15 @@
 import Tree from '@atlaskit/tree';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd-next';
-
+import { DragDropContext, Droppable } from 'react-beautiful-dnd-next';
+import { ELEMENT_TYPE } from 'constants/elementTypes';
 
 import ComponentItem from '../ComponentItem';
-import { ELEMENT_TYPE } from '../../../../constants/elementTypes';
 
 
+// workaround бага дерева, скопировано откуда-то из issues библиотеки
+// TODO: если будет обновляться библиотека, проверить, можно ли обойтись без этого.
+// Если нет - возможно нужно будет обновить патч с учетом обновленного кода render
 class PatchTree extends Tree {
   render() {
     const { isNestingEnabled } = this.props;
@@ -52,40 +54,31 @@ class ComponentTree extends Component {
     components: PropTypes.any.isRequired,
     selectedComponentId: PropTypes.string.isRequired,
     onToggleComponent: PropTypes.func.isRequired,
-    onToggleSubtree: PropTypes.func.isRequired,
     isMovingWidget: PropTypes.bool.isRequired,
     onMovingWidgetSelectTargetZone: PropTypes.func.isRequired,
     showOnlyWidgets: PropTypes.bool.isRequired,
     onExpand: PropTypes.func.isRequired,
     onCollapse: PropTypes.func.isRequired,
+    onDragStart: PropTypes.func.isRequired,
+    onDragEnd: PropTypes.func.isRequired,
   };
 
   state = {
     isHovered: false,
   };
 
-
-  componentDidMount() {
-    console.log('tree did mount');
-  }
-  componentDidUpdate() {
-    console.log('tree did update');
-  }
-
-
   onDragStart = (itemId) => {
-    console.log('drag start', itemId);
+    this.props.onDragStart(itemId);
   };
 
   onDragEnd = (source, destination) => {
-    console.log('drag end', { source, destination });
+    this.props.onDragEnd(source, destination);
   };
 
-  isDragAllowed = itemData => itemData.type !== ELEMENT_TYPE.ZONE;
+  isDragAllowed = itemData => itemData.type === ELEMENT_TYPE.WIDGET;
 
 
-  renderItem = ({ item, provided, snapshot }) => {
-    // console.log('render item called', item);
+  renderItem = ({ item, provided }) => {
     const {
       isMovingWidget,
       onMovingWidgetSelectTargetZone,
@@ -95,10 +88,6 @@ class ComponentTree extends Component {
       onCollapse,
     } = this.props;
 
-
-    // if (snapshot && snapshot.isDragging) {
-    //   console.log(snapshot);
-    // }
 
     // isDragDisabled не нашел как прикрутить в дерево, так что запрещаем таскать таким способом
     const dragHandleProps = { ...provided.dragHandleProps };

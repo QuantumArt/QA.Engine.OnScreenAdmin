@@ -1,4 +1,4 @@
-﻿import { HIDE_NOTIFICATION, SHOW_NOTIFICATION } from '../actions/notifications/actionTypes';
+﻿import { HIDE_NOTIFICATION, SHOW_NOTIFICATION } from 'actions/notifications/actionTypes';
 
 const initialState = {
   open: false,

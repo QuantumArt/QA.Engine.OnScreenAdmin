@@ -9,8 +9,9 @@ import {
   TREE_DATA_UPDATED,
   UPDATE_COMPONENTS,
   UPDATE_TREE_DATA,
-  COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT, EXPAND_SUBTREE, COLLAPSE_SUBTREE,
+  COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT, EXPAND_SUBTREE, COLLAPSE_SUBTREE, DRAG_AND_DROP,
 } from './actionTypes';
+import {EDIT_WIDGET_ACTIONS} from "../actionTypes";
 
 export function toggleComponent(id) {
   return { type: TOGGLE_COMPONENT, id };
@@ -76,3 +77,13 @@ export function componentTreeOnScreenSelectComponent(id) {
 export function componentTreeOnScreenScrollToTreeItem(id) {
   return { type: COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.SCROLL_TO_TREE_ITEM, id };
 }
+
+
+export function dragComponentStart(id) {
+  return { type: DRAG_AND_DROP.DRAG_START, payload: { onScreenId: id } };
+}
+
+export function dragComponentEnd(source, destination) {
+  return { type: DRAG_AND_DROP.DRAG_END, payload: { source, destination } };
+}
+

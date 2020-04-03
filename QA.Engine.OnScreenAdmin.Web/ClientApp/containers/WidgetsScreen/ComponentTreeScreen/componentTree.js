@@ -8,14 +8,16 @@ import {
   getShowOnlyWidgetsSelector, getTreeDataSelector,
 } from 'selectors/componentTree';
 import ComponentTree from 'Components/WidgetsScreen/ComponentTreeScreen/ComponentTree';
-import { movingWidgetSelectTargetZone } from '../../../actions/moveWidgetActions';
+import { movingWidgetSelectTargetZone } from 'actions/moveWidgetActions';
 import {
   toggleComponent,
   // componentTreeOnScreenOpenFullSubtree,
   // toggleSubtree,
   expandSubtree,
   collapseSubtree,
-} from '../../../actions/componentTree/actions';
+  dragComponentStart,
+  dragComponentEnd,
+} from 'actions/componentTree/actions';
 
 const mapStateToProps = state => ({
   components: getTreeDataSelector(state),
@@ -42,6 +44,12 @@ const mapDispatchToProps = dispatch => ({
   },
   onCollapse: (id) => {
     dispatch(collapseSubtree(id));
+  },
+  onDragStart: (id) => {
+    dispatch(dragComponentStart(id));
+  },
+  onDragEnd: (source, destination) => {
+    dispatch(dragComponentEnd(source, destination));
   },
 });
 
