@@ -135,7 +135,7 @@ ComponentOutline.propTypes = {
   coords: PropTypes.object.isRequired,
   component: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
-  onSelectComponent: PropTypes.object.isRequired,
+  onSelectComponent: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(ComponentOutline);

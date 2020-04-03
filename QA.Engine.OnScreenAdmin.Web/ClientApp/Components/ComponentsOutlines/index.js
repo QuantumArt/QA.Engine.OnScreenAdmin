@@ -82,7 +82,7 @@ ComponentsOutlines.propTypes = {
   components: PropTypes.arrayOf(PropTypes.object).isRequired,
   requestUpdateComponents: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
-  onSelectComponent: PropTypes.object.isRequired,
+  onSelectComponent: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(ComponentsOutlines);

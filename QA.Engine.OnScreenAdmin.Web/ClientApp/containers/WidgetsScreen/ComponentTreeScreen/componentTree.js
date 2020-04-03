@@ -2,14 +2,20 @@ import { connect } from 'react-redux';
 import {
   getMaxNestLevelSelector,
   getSelectedComponentIdSelector,
-  // filteredComponentTree,
   getDisabledComponentsSelector,
   getIsMovingWidgetSelector,
   getShowOnlyWidgetsSelector, getTreeDataSelector,
 } from 'selectors/componentTree';
 import ComponentTree from 'Components/WidgetsScreen/ComponentTreeScreen/ComponentTree';
-import { finishMovingWidget, movingWidgetSelectTargetZone } from '../../../actions/moveWidgetActions';
-import { toggleComponent, componentTreeOnScreenOpenFullSubtree, toggleSubtree } from '../../../actions/componentTree/actions';
+import { movingWidgetSelectTargetZone } from 'actions/moveWidgetActions';
+import {
+  toggleComponent,
+
+  expandSubtree,
+  collapseSubtree,
+  dragComponentStart,
+  dragComponentEnd,
+} from 'actions/componentTree/actions';
 
 const mapStateToProps = state => ({
   components: getTreeDataSelector(state),
@@ -25,14 +31,21 @@ const mapDispatchToProps = dispatch => ({
   onToggleComponent: (id) => {
     dispatch(toggleComponent(id));
   },
-  onToggleSubtree: (id) => {
-    dispatch(toggleSubtree(id));
-  },
-  onFinishMovingWidget: (id) => {
-    dispatch(finishMovingWidget(id));
-  },
+
   onMovingWidgetSelectTargetZone: (id) => {
     dispatch(movingWidgetSelectTargetZone(id));
+  },
+  onExpand: (id) => {
+    dispatch(expandSubtree(id));
+  },
+  onCollapse: (id) => {
+    dispatch(collapseSubtree(id));
+  },
+  onDragStart: (id) => {
+    dispatch(dragComponentStart(id));
+  },
+  onDragEnd: (source, destination) => {
+    dispatch(dragComponentEnd(source, destination));
   },
 });
 

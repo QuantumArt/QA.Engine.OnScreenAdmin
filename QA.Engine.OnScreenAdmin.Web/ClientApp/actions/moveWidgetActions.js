@@ -11,3 +11,13 @@ export function finishMovingWidget(id) {
 export function movingWidgetSelectTargetZone(id) {
   return { type: EDIT_WIDGET_ACTIONS.MOVING_WIDGET_SELECT_TARGET_ZONE, id };
 }
+
+
+export function dragAndDropMove(movingComponentId, targetZoneId, changes) {
+  return { type: EDIT_WIDGET_ACTIONS.DRAG_AND_DROP_MOVE,
+    payload: {
+      movingComponentId,
+      targetZoneId,
+      changes,
+    } };
+}

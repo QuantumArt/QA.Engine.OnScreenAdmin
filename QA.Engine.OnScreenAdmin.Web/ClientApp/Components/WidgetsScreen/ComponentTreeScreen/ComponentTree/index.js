@@ -2,11 +2,14 @@ import Tree from '@atlaskit/tree';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd-next';
-
+import { ELEMENT_TYPE } from 'constants/elementTypes';
 
 import ComponentItem from '../ComponentItem';
 
 
+// workaround бага дерева, скопировано откуда-то из issues библиотеки
+// TODO: если будет обновляться библиотека, проверить, можно ли обойтись без этого.
+// Если нет - возможно нужно будет обновить патч с учетом обновленного кода render
 class PatchTree extends Tree {
   render() {
     const { isNestingEnabled } = this.props;
@@ -51,57 +54,62 @@ class ComponentTree extends Component {
     components: PropTypes.any.isRequired,
     selectedComponentId: PropTypes.string.isRequired,
     onToggleComponent: PropTypes.func.isRequired,
-    onToggleSubtree: PropTypes.func.isRequired,
     isMovingWidget: PropTypes.bool.isRequired,
     onMovingWidgetSelectTargetZone: PropTypes.func.isRequired,
     showOnlyWidgets: PropTypes.bool.isRequired,
+    onExpand: PropTypes.func.isRequired,
+    onCollapse: PropTypes.func.isRequired,
+    onDragStart: PropTypes.func.isRequired,
+    onDragEnd: PropTypes.func.isRequired,
   };
 
   state = {
     isHovered: false,
   };
 
-
-  componentDidMount() {
-    console.log('tree did mount');
-  }
-  componentDidUpdate() {
-    console.log('tree did update');
-  }
-
-  onCollapse = () => {
-    console.log('onCollapse');
+  onDragStart = (itemId) => {
+    this.props.onDragStart(itemId);
   };
 
-  onExpand = () => {
-    console.log('onExpand');
+  onDragEnd = (source, destination) => {
+    this.props.onDragEnd(source, destination);
   };
+
+  isDragAllowed = itemData => itemData.type === ELEMENT_TYPE.WIDGET;
 
 
   renderItem = ({ item, provided }) => {
-    // console.log('render item called', item);
     const {
       isMovingWidget,
       onMovingWidgetSelectTargetZone,
       onToggleComponent,
-      onToggleSubtree,
       selectedComponentId,
+      onExpand,
+      onCollapse,
     } = this.props;
 
-    const newDraggableProps = {
-      ...provided.draggableProps,
-      // isDragDisabled: true,
-    };
+
+    // isDragDisabled не нашел как прикрутить в дерево, так что запрещаем таскать таким способом
+    const dragHandleProps = { ...provided.dragHandleProps };
+    if (!this.isDragAllowed(item.data)) {
+      dragHandleProps.onFocus = () => {};
+      dragHandleProps.onBlur = () => {};
+      dragHandleProps.onMouseDown = () => {};
+      dragHandleProps.onKeyDown = () => {};
+      dragHandleProps.onTouchStart = () => {};
+      dragHandleProps.draggable = false;
+    }
 
     return (
-      <div ref={provided.innerRef} {...newDraggableProps} {...provided.dragHandleProps}>
+      <div ref={provided.innerRef} {...provided.draggableProps} {...dragHandleProps}>
         <ComponentItem
           treeItem={item}
           isMovingWidget={isMovingWidget}
           onMovingWidgetSelectTargetZone={onMovingWidgetSelectTargetZone}
           selectedComponentId={selectedComponentId}
           onToggleComponent={onToggleComponent}
-          onToggleSubtree={onToggleSubtree}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
         />
       </div>
     );
@@ -109,16 +117,17 @@ class ComponentTree extends Component {
 
 
   render() {
-    const { components, isMovingWidget } = this.props;
-    console.log('rendering tree', components);
+    const { components, isMovingWidget, onCollapse, onExpand } = this.props;
     return (<PatchTree
       tree={components}
       renderItem={this.renderItem}
-      onExpand={this.onExpand}
-      onCollapse={this.onCollapse}
+      onExpand={onExpand}
+      onCollapse={onCollapse}
       offsetPerLevel={16}
       isDragEnabled={!isMovingWidget}
-
+      onDragStart={this.onDragStart}
+      onDragEnd={this.onDragEnd}
+      isNestingEnabled
     />);
   }
 }

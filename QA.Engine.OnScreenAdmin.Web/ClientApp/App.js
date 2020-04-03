@@ -4,12 +4,16 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import CssBaseline from 'material-ui/CssBaseline';
 import Sidebar from './containers/sidebar';
+import SnackbarNotificationContainer from './containers/snackbarNotification';
+import ConfirmationDialogContainer from './containers/confirmationDialog';
 
 const App = ({ store, persistor }) => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <CssBaseline />
       <Sidebar />
+      <SnackbarNotificationContainer />
+      <ConfirmationDialogContainer />
     </PersistGate>
   </Provider>
 );

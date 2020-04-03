@@ -43,7 +43,6 @@ function* needRebuildTreeData() {
 
 
 function* rebuildTreeData() {
-  console.log('rebuilding treeData');
   const searchText = yield select(getSearchTextSelector);
   const componentsList = yield select(filteredComponentList);
   const disabledComponents = yield select(getDisabledComponentsSelector);

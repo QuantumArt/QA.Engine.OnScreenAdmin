@@ -1,4 +1,4 @@
-import {TREE_DATA_ACTIONS} from '../actions/actionTypes';
+import { TREE_DATA_ACTIONS } from '../actions/actionTypes';
 import buildTreeData from '../utils/buildTreeData';
 
 const initialState = {

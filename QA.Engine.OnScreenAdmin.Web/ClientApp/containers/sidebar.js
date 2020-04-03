@@ -19,7 +19,7 @@ import {
 } from 'selectors/sidebar';
 import { getComponentsListSelector } from 'selectors/componentTree';
 import Sidebar from 'Components/Sidebar';
-import {updateComponents} from "../actions/componentTree/actions";
+import { updateComponents } from '../actions/componentTree/actions';
 
 
 const mapStateToProps = state => ({

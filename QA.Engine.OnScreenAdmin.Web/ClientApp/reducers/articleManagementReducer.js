@@ -26,6 +26,12 @@ const initialState = {
     isActive: false,
     onScreenId: null,
   },
+  dragAndDropComponent: {
+    movingComponentId: null,
+    targetZoneId: null,
+    changes: null,
+
+  },
   needReload: false,
   qpFormOpened: false,
 };
@@ -120,9 +126,19 @@ export default function articleManagementReducer(state = initialState, action) {
       return {
         ...state,
         moveWidget: {
-          isActive: false,
-          onScreenId: null,
-          targetZoneId: null,
+          ...initialState.moveWidget,
+        },
+        dragAndDropComponent: {
+          ...initialState.dragAndDropComponent,
+        },
+      };
+    case EDIT_WIDGET_ACTIONS.DRAG_AND_DROP_MOVE:
+      return {
+        ...state,
+        dragAndDropComponent: {
+          movingComponentId: action.payload.movingComponentId,
+          targetZoneId: action.payload.targetZoneId,
+          changes: action.payload.changes,
         },
       };
     case EDIT_PAGE_ACTIONS.SHOW_QP_FORM:
