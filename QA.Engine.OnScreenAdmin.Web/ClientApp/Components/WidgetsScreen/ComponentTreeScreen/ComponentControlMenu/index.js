@@ -16,12 +16,23 @@ class ComponentControlMenu extends Component {
   state = {
     anchorEl: null,
   };
+
+  getAnchorEl = () => {
+    const { renderMenuButton, anchorEl } = this.props;
+    return renderMenuButton ? this.state.anchorEl : anchorEl;
+  };
+
   handleClick = (event) => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
   handleRequestClose = () => {
-    this.setState({ anchorEl: null });
+    const { renderMenuButton, onMenuClose } = this.props;
+    if (renderMenuButton) {
+      this.setState({ anchorEl: null });
+    } else if (onMenuClose) {
+      onMenuClose();
+    }
   };
 
   handleEditWidget = () => {
@@ -55,21 +66,24 @@ class ComponentControlMenu extends Component {
   };
 
   renderZoneMenu = () => {
-    const { classes, isIframe } = this.props;
-    const open = Boolean(this.state.anchorEl);
+    const { classes, isIframe, renderMenuButton } = this.props;
+    const anchorEl = this.getAnchorEl();
+    const open = Boolean(anchorEl);
     return (
       <Fragment>
-        <IconButton
-          aria-label="More"
-          aria-owns={open ? 'long-menu' : null}
-          aria-haspopup="true"
-          onClick={this.handleClick}
-        >
-          <MoreVertIcon />
-        </IconButton>
+        {renderMenuButton &&
+          (<IconButton
+            aria-label="More"
+            aria-owns={open ? 'long-menu' : null}
+            aria-haspopup="true"
+            onClick={this.handleClick}
+          >
+            <MoreVertIcon />
+          </IconButton>)
+        }
         <Menu
           id="long-menu"
-          anchorEl={this.state.anchorEl}
+          anchorEl={anchorEl}
           open={open}
           onClose={this.handleRequestClose}
         >
@@ -94,21 +108,24 @@ class ComponentControlMenu extends Component {
   };
 
   renderWidgetMenu = () => {
-    const { classes, isIframe } = this.props;
-    const open = Boolean(this.state.anchorEl);
+    const { classes, isIframe, renderMenuButton } = this.props;
+    const anchorEl = this.getAnchorEl();
+    const open = Boolean(anchorEl);
     return (
       <Fragment>
-        <IconButton
-          aria-label="More"
-          aria-owns={open ? 'long-menu' : null}
-          aria-haspopup="true"
-          onClick={this.handleClick}
-        >
-          <MoreVertIcon />
-        </IconButton>
+        {renderMenuButton &&
+          (<IconButton
+            aria-label="More"
+            aria-owns={open ? 'long-menu' : null}
+            aria-haspopup="true"
+            onClick={this.handleClick}
+          >
+            <MoreVertIcon />
+          </IconButton>)
+        }
         <Menu
           id="long-menu"
-          anchorEl={this.state.anchorEl}
+          anchorEl={anchorEl}
           open={open}
           onClose={this.handleRequestClose}
         >
@@ -142,21 +159,24 @@ class ComponentControlMenu extends Component {
   };
 
   renderArticleMenu = () => {
-    const { classes, isIframe } = this.props;
-    const open = Boolean(this.state.anchorEl);
+    const { classes, isIframe, renderMenuButton } = this.props;
+    const anchorEl = this.getAnchorEl();
+    const open = Boolean(anchorEl);
     return (
       <Fragment>
-        <IconButton
-          aria-label="More"
-          aria-owns={open ? 'long-menu' : null}
-          aria-haspopup="true"
-          onClick={this.handleClick}
-        >
-          <MoreVertIcon />
-        </IconButton>
+        {renderMenuButton &&
+          (<IconButton
+            aria-label="More"
+            aria-owns={open ? 'long-menu' : null}
+            aria-haspopup="true"
+            onClick={this.handleClick}
+          >
+            <MoreVertIcon />
+          </IconButton>)
+        }
         <Menu
           id="long-menu"
-          anchorEl={this.state.anchorEl}
+          anchorEl={anchorEl}
           open={open}
           onClose={this.handleRequestClose}
         >
@@ -201,6 +221,15 @@ ComponentControlMenu.propTypes = {
   onScreenId: PropTypes.string.isRequired,
   classes: PropTypes.object.isRequired,
   isIframe: PropTypes.bool.isRequired,
+  renderMenuButton: PropTypes.bool,
+  anchorEl: PropTypes.object,
+  onMenuClose: PropTypes.func,
+};
+
+ComponentControlMenu.defaultProps = {
+  renderMenuButton: true,
+  anchorEl: null,
+  onMenuClose: null,
 };
 
 export default withStyles(styles)(ComponentControlMenu);

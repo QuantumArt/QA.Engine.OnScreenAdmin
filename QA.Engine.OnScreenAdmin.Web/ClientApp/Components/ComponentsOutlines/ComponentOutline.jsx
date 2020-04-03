@@ -4,6 +4,8 @@ import { withStyles } from 'material-ui/styles';
 import classNames from 'classnames';
 
 import { Settings } from 'material-ui-icons';
+import ComponentControlMenuContainer from '../../containers/WidgetsScreen/componentControlMenu';
+import { ELEMENT_TYPE } from '../../constants/elementTypes';
 
 const styles = () => ({
   highlightsItem: {
@@ -38,6 +40,10 @@ const styles = () => ({
     top: 0,
     right: '22px',
   },
+  articleName: {
+    top: 0,
+    right: '22px',
+  },
   editButton: {
     top: 0,
     right: 0,
@@ -46,86 +52,124 @@ const styles = () => ({
   },
 });
 
-function ComponentOutline({
-  showAllZones,
-  showAllWidgets,
-  showZonesTitles,
-  coords,
-  component,
-  classes,
-  onSelectComponent,
-}) {
-  let color = null;
-  if (component.type === 'zone') {
-    color = '#66bb6a';
-  } else if (component.type === 'widget') {
-    color = '#29b6f6';
-  } else if (component.type === 'article') {
-    color = '#ff9900';
-  }
-
-  let itemInlineStyles = {
-    top: `${coords.top}px`,
-    left: `${coords.left}px`,
-    width: `${coords.width}px`,
-    height: `${coords.height}px`,
-    borderColor: color,
+class ComponentOutline extends React.Component {
+  state = {
+    anchorEl: null,
   };
 
-  if (component.isSelected || (showAllZones && component.type === 'zone') || (showAllWidgets && component.type === 'widget')) {
-    itemInlineStyles = {
-      ...itemInlineStyles,
-      borderStyle: 'dashed',
-    };
-  }
-
-  const nameInlineStyles = {
-    background: color, color: '#ffffff',
+  handleCloseMenu = () => {
+    this.setState({ anchorEl: null });
   };
 
+  handleSettingsClick = (event) => {
+    this.setState({ anchorEl: event.currentTarget });
+    console.log(this.state.anchorEl);
+  };
 
-  let zoneBodyInlineStyles = null;
-  if (showZonesTitles) {
-    zoneBodyInlineStyles = {
-      opacity: '1',
-    };
+  renderSettingsButton(classes, component) {
+    return (<React.Fragment>
+      <i
+        tabIndex={0}
+        role="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          this.handleSettingsClick(e);
+        }}
+        className={classes.editButton}
+      >
+        <Settings style={{ fontSize: 20 }} />
+      </i>
+      <ComponentControlMenuContainer
+        onScreenId={component.onScreenId}
+        renderMenuButton={false}
+        anchorEl={this.state.anchorEl}
+        onMenuClose={this.handleCloseMenu}
+      />
+    </React.Fragment>);
   }
 
-  return (
-    <div
-      tabIndex={0}
-      role="button"
-      onClick={() => onSelectComponent(component.onScreenId)}
-      className={`${classes.highlightsItem} component--${component.onScreenId}`}
-      style={itemInlineStyles}
-    >
-      {component.type === 'widget' && (
-        <div className={classes.highlightsBody}>
-          <span className={classNames(classes.componentName, classes.widgetName)} style={nameInlineStyles}>
-            {component.properties.title}
-          </span>
-          <i
-            tabIndex={0}
-            role="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              console.log(`Добавить обработку редактирования ${component.type} ${component.onScreenId}`);
-            }}
-            className={classes.editButton}
-          >
-            <Settings style={{ fontSize: 20 }} />
-          </i>
-        </div>
-      )}
-      {(component.type === 'zone') && (
-        <div className={classes.highlightsBody} style={zoneBodyInlineStyles}>
-          <span className={classNames(classes.componentName, classes.zoneName)} style={nameInlineStyles}>
-            {component.properties.zoneName}
-          </span>
-        </div>
-      )}
-    </div >
-  );
+  render() {
+    const {
+      showAllZones,
+      showAllWidgets,
+      showZonesTitles,
+      coords,
+      component,
+      classes,
+      onSelectComponent,
+    } = this.props;
+    let color = null;
+    if (component.type === 'zone') {
+      color = '#66bb6a';
+    } else if (component.type === 'widget') {
+      color = '#29b6f6';
+    } else if (component.type === 'article') {
+      color = '#ff9900';
+    }
+
+    let itemInlineStyles = {
+      top: `${coords.top}px`,
+      left: `${coords.left}px`,
+      width: `${coords.width}px`,
+      height: `${coords.height}px`,
+      borderColor: color,
+    };
+
+    if (component.isSelected || (showAllZones && component.type === 'zone') || (showAllWidgets && component.type === 'widget')) {
+      itemInlineStyles = {
+        ...itemInlineStyles,
+        borderStyle: 'dashed',
+        opacity: '1',
+      };
+    }
+
+    const nameInlineStyles = {
+      background: color, color: '#ffffff',
+    };
+
+
+    let highlightedInlineStyles = null;
+    if (component.isSelected || (component.type === ELEMENT_TYPE.ZONE && showZonesTitles)) {
+      highlightedInlineStyles = {
+        opacity: '1',
+      };
+    }
+
+
+    return (
+      <div
+        tabIndex={0}
+        role="button"
+        onClick={() => onSelectComponent(component.onScreenId)}
+        className={`${classes.highlightsItem} component--${component.onScreenId}`}
+        style={itemInlineStyles}
+      >
+        {component.type === ELEMENT_TYPE.WIDGET && (
+          <div className={classes.highlightsBody} style={highlightedInlineStyles}>
+            <span className={classNames(classes.componentName, classes.widgetName)} style={nameInlineStyles}>
+              {component.properties.title}
+            </span>
+            {this.renderSettingsButton(classes, component)}
+          </div>
+        )}
+        {(component.type === ELEMENT_TYPE.ZONE) && (
+          <div className={classes.highlightsBody} style={highlightedInlineStyles}>
+            <span className={classNames(classes.componentName, classes.zoneName)} style={nameInlineStyles}>
+              {component.properties.zoneName}
+            </span>
+          </div>
+        )}
+        {(component.type === ELEMENT_TYPE.ARTICLE) && (
+          <div className={classes.highlightsBody} style={highlightedInlineStyles}>
+            <span className={classNames(classes.componentName, classes.articleName)} style={nameInlineStyles}>
+              {component.properties.title}
+            </span>
+            {this.renderSettingsButton(classes, component)}
+          </div>
+        )}
+      </div>
+    );
+  }
 }
 
 ComponentOutline.propTypes = {
@@ -136,6 +180,8 @@ ComponentOutline.propTypes = {
   component: PropTypes.object.isRequired,
   classes: PropTypes.object.isRequired,
   onSelectComponent: PropTypes.object.isRequired,
+
 };
+
 
 export default withStyles(styles)(ComponentOutline);
