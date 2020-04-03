@@ -12,6 +12,7 @@ import watchWidgetScreen from './widgetScreenSagas';
 import watchEditPage from './editPageSagas';
 import watchEditArticle from './editArticleSagas';
 import watchComponentsList from './componentsListSagas';
+import watchDragAndDrop from './dragAndDropSagas';
 
 export default function* rootSaga() {
   yield all([
@@ -28,5 +29,6 @@ export default function* rootSaga() {
     watchWidgetCreationWizard(),
     watchWidgetScreen(),
     watchEditPage(),
+    watchDragAndDrop(),
   ]);
 }

@@ -25,12 +25,8 @@ export const getAvailableWidgets = () => axiosInstance().get('/availableWidgets'
   },
 });
 
-export const moveWidget = options =>
-  axiosInstance().post('/MoveWidget', qs.stringify({
-    widgetId: options.widgetId,
-    newParentId: options.newParentId,
-    zoneName: options.zoneName,
-  }));
+export const moveWidget = changes =>
+  axiosInstance().post('/MoveWidget', qs.stringify({ changes }));
 
 
 export const getTestsData = cids => axiosInstance().get('/abtests/info', {

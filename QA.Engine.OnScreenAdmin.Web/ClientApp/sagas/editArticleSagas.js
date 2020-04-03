@@ -12,7 +12,6 @@ const currentEditingArticleSelector = state =>
 
 function* editArticle() {
   const article = yield select(currentEditingArticleSelector);
-  console.log('edit article saga.', article);
   editArticleQpForm(article.properties.articleId, qpFormCallback, article.properties.contentId);
   yield put({ type: EDIT_ARTICLE_ACTIONS.SHOW_QP_FORM });
 }

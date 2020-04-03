@@ -5,21 +5,25 @@ import {
   TOGGLE_COMPONENT,
   TOGGLE_COMPONENT_TREE_SEARCH_BOX,
   TOGGLE_SHOW_ONLY_WIDGETS,
-  TOGGLE_SUBTREE,
   TREE_DATA_UPDATE_REQUESTED,
   TREE_DATA_UPDATED,
   UPDATE_COMPONENTS,
   UPDATE_TREE_DATA,
-  COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT,
+  COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT, EXPAND_SUBTREE, COLLAPSE_SUBTREE, DRAG_AND_DROP,
 } from './actionTypes';
+
 
 export function toggleComponent(id) {
   return { type: TOGGLE_COMPONENT, id };
 }
 
 
-export function toggleSubtree(id) {
-  return { type: TOGGLE_SUBTREE, id };
+export function expandSubtree(id) {
+  return { type: EXPAND_SUBTREE, id };
+}
+
+export function collapseSubtree(id) {
+  return { type: COLLAPSE_SUBTREE, id };
 }
 
 export function changeSearchText(newValue) {
@@ -69,3 +73,13 @@ export function componentTreeOnScreenSelectComponent(id) {
 export function componentTreeOnScreenScrollToTreeItem(id) {
   return { type: COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.SCROLL_TO_TREE_ITEM, id };
 }
+
+
+export function dragComponentStart(id) {
+  return { type: DRAG_AND_DROP.DRAG_START, payload: { onScreenId: id } };
+}
+
+export function dragComponentEnd(source, destination) {
+  return { type: DRAG_AND_DROP.DRAG_END, payload: { source, destination } };
+}
+

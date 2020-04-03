@@ -12,7 +12,6 @@ import {
 
 
 function* onScreenSelectComponent(action) {
-  console.log('onScreenSelectComponent saga', action);
   yield put(componentTreeOnScreenOpenFullSubtree(action.onScreenId));
   yield put(componentTreeOnScreenSelectComponent(action.onScreenId));
 }

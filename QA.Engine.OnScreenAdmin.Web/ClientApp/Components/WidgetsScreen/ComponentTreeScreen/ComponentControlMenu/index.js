@@ -4,7 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui-icons/MoreVert';
-import { ELEMENT_TYPE } from "constants/elementTypes";
+import { ELEMENT_TYPE } from 'constants/elementTypes';
 
 const styles = theme => ({
   menuItem: {
@@ -197,7 +197,7 @@ class ComponentControlMenu extends Component {
     const {
       type,
     } = this.props;
-    switch(type) {
+    switch (type) {
       case ELEMENT_TYPE.ZONE:
         return this.renderZoneMenu();
       case ELEMENT_TYPE.WIDGET:

@@ -21,6 +21,10 @@ const endArticle = val => val.startsWith(endArticlePrefix);
 
 const isElement = val => isZone(val) || isWidget(val) || isArticle(val);
 
+const numberPropertiesNames = ['order'];
+
+const isNumberProperty = propName => _.indexOf(numberPropertiesNames, propName) !== -1;
+
 const getElementType = (val) => {
   if (isZone(val)) {
     return ELEMENT_TYPE.ZONE;
@@ -65,10 +69,14 @@ const mapProperties = (val) => {
       break;
   }
 
+
   return _.reduce(pair, (prev, cur) => {
     const parsed = cur.split('=');
     const key = parsed[0];
-    const value = parsed[1].replace(/'/g, '');
+    let value = parsed[1].replace(/'/g, '');
+    if (isNumberProperty(key)) {
+      value = Number(value);
+    }
 
     return {
       ...prev,
@@ -232,7 +240,6 @@ function getCords(node, el) {
 
 
 export default function buildFlatList() {
-  console.log('buildFlatList called');
   const list = [];
   const hashMap = {};
   const stack = [];

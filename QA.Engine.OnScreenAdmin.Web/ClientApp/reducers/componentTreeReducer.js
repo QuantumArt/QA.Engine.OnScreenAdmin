@@ -2,9 +2,9 @@ import _ from 'lodash';
 import { mutateTree } from '@atlaskit/tree';
 import {
   CHANGE_COMPONENT_TREE_SEARCH_TEXT, TOGGLE_COMPONENT,
-  TOGGLE_COMPONENT_TREE_SEARCH_BOX, OPEN_FULL_SUBTREE,
-  TOGGLE_SHOW_ONLY_WIDGETS, TOGGLE_SUBTREE,
-  UPDATE_COMPONENTS, UPDATE_TREE_DATA, COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT,
+  TOGGLE_COMPONENT_TREE_SEARCH_BOX,
+  TOGGLE_SHOW_ONLY_WIDGETS,
+  UPDATE_COMPONENTS, UPDATE_TREE_DATA, COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT, EXPAND_SUBTREE, COLLAPSE_SUBTREE,
 } from '../actions/componentTree/actionTypes';
 
 
@@ -22,7 +22,6 @@ const initialState = {
 export default function componentTreeReducer(state = initialState, action) {
   switch (action.type) {
     case UPDATE_COMPONENTS:
-      console.log('update components', action);
       return {
         ...state,
         components: action.components,
@@ -39,14 +38,17 @@ export default function componentTreeReducer(state = initialState, action) {
           ? ''
           : action.id,
       };
-    case TOGGLE_SUBTREE: {
-      const node = _.find(state.treeData.items, { id: action.id });
-      const prevState = node && node.isExpanded;
+
+    case EXPAND_SUBTREE:
       return {
         ...state,
-        treeData: mutateTree(state.treeData, action.id, { isExpanded: !prevState }),
+        treeData: mutateTree(state.treeData, action.id, { isExpanded: true }),
       };
-    }
+    case COLLAPSE_SUBTREE:
+      return {
+        ...state,
+        treeData: mutateTree(state.treeData, action.id, { isExpanded: false }),
+      };
     case COMPONENT_TREE_ONSCREEN_SELECT_COMPONENT.OPEN_FULL_SUBTREE: {
       const onScreenId = action.id;
       let parentTreeItem = _.find(state.treeData.items, i => _.includes(i.children, onScreenId));
