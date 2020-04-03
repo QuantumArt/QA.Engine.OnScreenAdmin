@@ -62,8 +62,9 @@ class ComponentOutline extends React.Component {
   };
 
   handleSettingsClick = (event) => {
+    const { onSelectComponent, component } = this.props;
     this.setState({ anchorEl: event.currentTarget });
-    console.log(this.state.anchorEl);
+    onSelectComponent(component.onScreenId);
   };
 
   renderSettingsButton(classes, component) {
