@@ -74,7 +74,6 @@ export default function buildTreeData(
   availableWidgets = [],
   showOnlyWidgets = false,
 ) {
-  console.log('buildTreeData called', { list, disabledComponents, allOpened, availableWidgets, showOnlyWidgets });
   if (!list) {
     return null;
   }
@@ -84,7 +83,6 @@ export default function buildTreeData(
   const _list = _.cloneDeep(list);
 
   const storedState = getSubtreeState();
-  console.log(storedState);
 
   const treeItems = _list.map(x => ({
     id: x.onScreenId,
@@ -147,7 +145,6 @@ export default function buildTreeData(
   _.forEach(result.items, (x) => {
     x.hasChildren = x.children.length > 0;
   });
-  console.log('buildTreeData: ', result);
   return result;
 }
 

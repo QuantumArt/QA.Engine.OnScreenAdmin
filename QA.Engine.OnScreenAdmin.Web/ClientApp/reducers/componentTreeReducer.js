@@ -22,7 +22,6 @@ const initialState = {
 export default function componentTreeReducer(state = initialState, action) {
   switch (action.type) {
     case UPDATE_COMPONENTS:
-      console.log('update components', action);
       return {
         ...state,
         components: action.components,

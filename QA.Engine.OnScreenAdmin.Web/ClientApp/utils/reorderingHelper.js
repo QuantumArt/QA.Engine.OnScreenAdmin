@@ -57,12 +57,12 @@ export const generateReorderChanges = (destComponents, itemToMove, index) => {
       }
     }
   }
-  console.groupCollapsed('reordering components');
-  console.log('original components');
-  console.table(destComponents);
-  console.log('reordered components');
-  console.table(dest);
-  console.groupEnd();
+  // console.groupCollapsed('reordering components');
+  // console.log('original components');
+  // console.table(destComponents);
+  // console.log('reordered components');
+  // console.table(dest);
+  // console.groupEnd();
 
   const changes = [];
   _.forEach(dest, (x) => {

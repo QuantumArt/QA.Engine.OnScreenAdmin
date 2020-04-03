@@ -240,7 +240,6 @@ function getCords(node, el) {
 
 
 export default function buildFlatList() {
-  console.log('buildFlatList called');
   const list = [];
   const hashMap = {};
   const stack = [];

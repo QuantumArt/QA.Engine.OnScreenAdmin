@@ -37,7 +37,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(beginWidgetCreation(payload));
   },
   toggleShowOnlyWidgets: () => {
-    console.log('show only widgets dispatch');
     dispatch(toggleShowOnlyWidgets());
   },
   editPage: (currentPageId) => {

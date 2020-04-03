@@ -30,7 +30,6 @@ function* onDragEnd({ payload }) {
   // destination тоже должен быть зоной
   // у зоны есть .properties.parentAbstractItemId (это айди виджета или страницы)
   try {
-    console.log('caught drag end in saga', payload);
     const { source, destination } = payload;
     // ничего не поменялось, бросили там же, где взяли
     if (source.parentId === destination.parentId && source.index === destination.index) {
@@ -47,7 +46,6 @@ function* onDragEnd({ payload }) {
     if (!movingComponent) {
       throw new Error('Компонент не найден в списке');
     }
-    console.log('found source component', { movingComponentOnScreenId, movingComponent });
     if (movingComponent.type !== ELEMENT_TYPE.WIDGET) {
       throw new Error('На данный момент поддерживается перемещение только виджетов');
     }
@@ -73,13 +71,11 @@ function* onDragEnd({ payload }) {
     let destinationParent = destinationComponent.parentOnScreenId
       ? _.find(components, { onScreenId: destinationComponent.parentOnScreenId })
       : null;
-    console.log('destinationParent', destinationParent);
     while (destinationParent !== null) {
       if (destinationParent.onScreenId === movingComponentOnScreenId) {
         yield put(showNotification('Невозможно переместить компонент: целевая зона является дочерней по отношению к перемещаемой', 5000));
         return;
       }
-      console.log('destinationParent', destinationParent);
       destinationParent = destinationParent.parentOnScreenId
         ? _.find(components, { onScreenId: destinationParent.parentOnScreenId })
         : null;
@@ -110,7 +106,6 @@ function* onDragEnd({ payload }) {
       const destinationSiblings = destinationSiblingIds
         .map(x => _.find(components, { onScreenId: x }))
         .map(x => ({ abstractItemId: getComponentAbstractItemId(x), order: x.properties.order }));
-      console.log('destination siblings:', destinationSiblings);
       changes = generateReorderChanges(destinationSiblings,
         { abstractItemId: movingComponentAbstractItemId, order: movingComponentOrder },
         destination.index);

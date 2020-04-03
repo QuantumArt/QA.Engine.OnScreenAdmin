@@ -118,7 +118,6 @@ class ComponentTree extends Component {
 
   render() {
     const { components, isMovingWidget, onCollapse, onExpand } = this.props;
-    console.log('rendering tree', components);
     return (<PatchTree
       tree={components}
       renderItem={this.renderItem}
