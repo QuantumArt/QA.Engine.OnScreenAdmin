@@ -29,6 +29,8 @@ spec:
             configMapKeyRef:
               name: qp-config
               key: CONFIGURATION_SERVICE_TOKEN
+        - name: QpAuthSettings__WorkAsAdministrator
+          value: 'true'
         volumeMounts:
         - mountPath: /etc/localtime
           name: tz-config
