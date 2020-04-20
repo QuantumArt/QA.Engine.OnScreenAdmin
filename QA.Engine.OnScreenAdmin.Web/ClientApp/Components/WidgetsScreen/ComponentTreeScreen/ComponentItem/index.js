@@ -42,7 +42,24 @@ const styles = theme => ({
     marginLeft: '-10px',
     marginTop: '-20px',
     color: red[500],
+    zIndex: 100,
   },
+
+  componentAvatarBlueprint: {
+    borderRadius: 0,
+    color: 'inherit',
+    width: theme.typography.pxToRem(35),
+    height: theme.typography.pxToRem(60),
+    backgroundColor: 'white',
+  },
+  componentAvatarBlueprintSelected: {
+    borderRadius: 0,
+    color: deepPurple[500],
+    fontWeight: 'bold',
+
+    backgroundColor: 'white',
+  },
+
   listItem: {
     height: theme.typography.pxToRem(76.8),
   },
@@ -50,7 +67,7 @@ const styles = theme => ({
     fontSize: theme.typography.pxToRem(20),
   },
   listItemTextRoot: {
-    marginLeft: theme.spacing.unit * 2,
+    // marginLeft: theme.spacing.unit,
     // fontSize: theme.typography.pxToRem(24),
     justifyContent: 'flex-start',
   },
@@ -206,7 +223,12 @@ class ComponentItem extends Component {
   };
 
   renderListItemIcon = (type, icon, isNew, isSelected, classes) => {
-    const className = isSelected ? classes.componentAvatarSelected : classes.componentAvatar;
+    const isBluePrintIcon = ELEMENT_TYPE.WIDGET && icon && icon.iconClass;
+    // eslint-disable-next-line no-nested-ternary
+    const className = isBluePrintIcon
+      ? isSelected ? classes.componentAvatarBlueprintSelected : classes.componentAvatarBlueprint
+      : isSelected ? classes.componentAvatarSelected : classes.componentAvatar;
+
 
     switch (type) {
       case ELEMENT_TYPE.ZONE:
@@ -216,13 +238,19 @@ class ComponentItem extends Component {
       case ELEMENT_TYPE.WIDGET:
         if (icon && icon.iconClass) {
           return icon.iconIntent
-            ? (<Avatar className={className}><Icon icon={icon.iconClass} intent={icon.iconIntent} /></Avatar>)
-            : (<Avatar className={className}><Icon icon={icon.iconClass} /></Avatar>);
+            ? (<Avatar className={className}><Icon icon={icon.iconClass} intent={icon.iconIntent} />
+              {isNew && (<Unpublished className={classes.unpublishedOverlay} />)}
+            </Avatar>)
+            : (<Avatar className={className}><Icon icon={icon.iconClass} />
+              {isNew && (<Unpublished className={classes.unpublishedOverlay} />)}
+            </Avatar>);
         }
         return (<Avatar className={className}><Widgets /></Avatar>);
       case ELEMENT_TYPE.ARTICLE:
         return (<Fragment>
-          <Avatar className={className}><ArticleIcon className={className} /></Avatar>
+          <Avatar className={className}>
+            <ArticleIcon className={className} />
+          </Avatar>
           {isNew && (<Unpublished className={classes.unpublishedOverlay} />)}
         </Fragment>);
       default:

@@ -63,6 +63,7 @@ function mapComponentToTreeItemData(source, availableWidgets, disabledComponents
     icon: source.type === ELEMENT_TYPE.WIDGET ? getWidgetTypeIcon(source, availableWidgets) : null,
     isDisabled: _.indexOf(disabledComponents, source.onScreenId) !== -1,
     primaryText,
+    isNew: source.properties && source.properties.published === false,
   };
 }
 

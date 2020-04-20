@@ -16,7 +16,6 @@ function* getAvailableWidgets(action) {
       });
     } else {
       const availableWidgetsInfo = yield call(apiGetAvailableWidgets);
-      console.log('availableWidgetsInfo', availableWidgetsInfo);
       yield put({
         type: CONTENT_META_INFO_ACTION.GET_AVAILABLE_WIDGETS_SUCCESS,
         availableWidgets: availableWidgetsInfo.data.data,
