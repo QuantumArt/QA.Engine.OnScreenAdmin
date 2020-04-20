@@ -17,11 +17,11 @@
     <PackageReference Include="Quantumart.AspNetCore" Version="4.0.0-beta34" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.1.0" />
-    <PackageReference Include="QA.DotNetCore.Caching" Version="1.0.0" />
-    <PackageReference Include="QA.DotNetCore.Engine.CacheTags" Version="1.0.0" />
-    <PackageReference Include="QA.DotNetCore.Engine.Persistent.Dapper" Version="1.0.0" />
-    <PackageReference Include="QA.DotNetCore.Engine.Persistent.Interfaces" Version="1.0.0" />
-    <PackageReference Include="QA.DotNetCore.Engine.QpData" Version="1.0.0" />
+    <PackageReference Include="QA.DotNetCore.Caching" Version="1.0.9-beta" />
+    <PackageReference Include="QA.DotNetCore.Engine.CacheTags" Version="1.0.9-beta" />
+    <PackageReference Include="QA.DotNetCore.Engine.Persistent.Dapper" Version="1.0.9-beta" />
+    <PackageReference Include="QA.DotNetCore.Engine.Persistent.Interfaces" Version="1.0.9-beta" />
+    <PackageReference Include="QA.DotNetCore.Engine.QpData" Version="1.0.9-beta" />
   </ItemGroup>
 
   <ItemGroup>
