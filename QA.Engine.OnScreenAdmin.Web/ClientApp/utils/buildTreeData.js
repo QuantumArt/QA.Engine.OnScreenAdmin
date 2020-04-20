@@ -2,13 +2,17 @@ import _ from 'lodash';
 import { ELEMENT_TYPE } from '../constants/elementTypes';
 import { getSubtreeState } from './componentTreeStateStorage';
 
-const getWidgetTypeIconSrc = (component, availableWidgets) => {
+const getWidgetTypeIcon = (component, availableWidgets) => {
   if (availableWidgets === null || availableWidgets.length === 0) {
     return null;
   }
   const availableWidget = _.find(availableWidgets, { discriminator: component.properties.type });
-  if (availableWidget && availableWidget.iconUrl) {
-    return availableWidget.iconUrl;
+  if (availableWidget) {
+    return {
+      iconUrl: availableWidget.iconUrl,
+      iconClass: availableWidget.iconClass,
+      iconIntent: availableWidget.iconIntent,
+    };
   }
 
   return null;
@@ -56,7 +60,7 @@ function mapComponentToTreeItemData(source, availableWidgets, disabledComponents
   return {
     onScreenId: source.onScreenId,
     type: source.type,
-    iconSrc: source.type === ELEMENT_TYPE.WIDGET ? getWidgetTypeIconSrc(source, availableWidgets) : '',
+    icon: source.type === ELEMENT_TYPE.WIDGET ? getWidgetTypeIcon(source, availableWidgets) : null,
     isDisabled: _.indexOf(disabledComponents, source.onScreenId) !== -1,
     primaryText,
   };

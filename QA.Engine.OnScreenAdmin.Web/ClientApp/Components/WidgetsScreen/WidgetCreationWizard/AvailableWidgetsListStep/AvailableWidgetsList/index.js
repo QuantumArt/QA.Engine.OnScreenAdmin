@@ -28,7 +28,11 @@ AvailableWidgetsList.propTypes = {
       isPage: PropTypes.bool.isRequired,
       title: PropTypes.string.isRequired,
       description: PropTypes.string,
-      iconUrl: PropTypes.string.isRequired,
+      icon: PropTypes.shape({
+        iconUrl: PropTypes.string,
+        iconClass: PropTypes.string,
+        iconIntent: PropTypes.string,
+      }),
     }).isRequired,
   ),
   onSelectWidget: PropTypes.func.isRequired,

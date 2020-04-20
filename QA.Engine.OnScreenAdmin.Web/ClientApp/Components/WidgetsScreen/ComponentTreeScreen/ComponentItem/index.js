@@ -10,18 +10,14 @@ import ExpandMore from 'material-ui-icons/ExpandMore';
 import Widgets from 'material-ui-icons/Widgets';
 import Unpublished from 'material-ui-icons/NewReleases';
 import IconButton from 'material-ui/IconButton';
-import Icon from 'material-ui/Icon';
+import MaterialIcon from 'material-ui/Icon';
 import ZoneIcon from 'Components/Icons/Zone';
 import ArticleIcon from 'material-ui-icons/Description';
 import { deepPurple, red } from 'material-ui/colors';
 import ComponentControlMenu from 'containers/WidgetsScreen/componentControlMenu';
 import { MAX_COMPONENT_PRIMARY_TEXT_LENGTH } from 'constants/general';
 import { ELEMENT_TYPE } from 'constants/elementTypes';
-
-
-
-
-
+import { Icon } from '@blueprintjs/core';
 
 
 const styles = theme => ({
@@ -30,6 +26,7 @@ const styles = theme => ({
     color: 'inherit',
     width: theme.typography.pxToRem(30),
     height: theme.typography.pxToRem(30),
+    backgroundColor: 'white',
   },
   componentAvatarSelected: {
     borderRadius: 0,
@@ -37,6 +34,7 @@ const styles = theme => ({
     fontWeight: 'bold',
     width: theme.typography.pxToRem(30),
     height: theme.typography.pxToRem(30),
+    backgroundColor: 'white',
   },
   unpublishedOverlay: {
     width: theme.typography.pxToRem(25),
@@ -90,7 +88,11 @@ class ComponentItem extends Component {
         onScreenId: PropTypes.string.isRequired,
         type: PropTypes.oneOf([ELEMENT_TYPE.WIDGET, ELEMENT_TYPE.ZONE, ELEMENT_TYPE.ARTICLE]).isRequired,
         primaryText: PropTypes.string.isRequired,
-        iconSrc: PropTypes.string,
+        icon: PropTypes.shape({
+          iconUrl: PropTypes.string,
+          iconClass: PropTypes.string,
+          iconIntent: PropTypes.string,
+        }),
         isDisabled: PropTypes.bool,
       }),
     }).isRequired,
@@ -196,14 +198,14 @@ class ComponentItem extends Component {
         onClick={this.handleSubtreeClick}
         classes={{ root: classes.expandNodeRoot }}
       >
-        <Icon classes={{ root: classes.expandNodeIcon }}>
+        <MaterialIcon classes={{ root: classes.expandNodeIcon }}>
           {isOpened ? <ExpandLess /> : <ExpandMore />}
-        </Icon>
+        </MaterialIcon>
       </IconButton>
     );
   };
 
-  renderListItemIcon = (type, iconSrc, isNew, isSelected, classes) => {
+  renderListItemIcon = (type, icon, isNew, isSelected, classes) => {
     const className = isSelected ? classes.componentAvatarSelected : classes.componentAvatar;
 
     switch (type) {
@@ -212,17 +214,11 @@ class ComponentItem extends Component {
           <ZoneIcon className={className} />
         );
       case ELEMENT_TYPE.WIDGET:
-        // if (iconSrc) {
-        //   return (
-        //     <Fragment>
-        //       {iconSrc
-        //         ? (<Avatar className={className} src={iconSrc} />)
-        //         : (<Avatar className={className}><Widgets /></Avatar>)
-        //       }
-        //       {isNew && (<Unpublished className={classes.unpublishedOverlay} />)}
-        //     </Fragment>
-        //   );
-        // }
+        if (icon && icon.iconClass) {
+          return icon.iconIntent
+            ? (<Avatar className={className}><Icon icon={icon.iconClass} intent={icon.iconIntent} /></Avatar>)
+            : (<Avatar className={className}><Icon icon={icon.iconClass} /></Avatar>);
+        }
         return (<Avatar className={className}><Widgets /></Avatar>);
       case ELEMENT_TYPE.ARTICLE:
         return (<Fragment>
@@ -243,7 +239,7 @@ class ComponentItem extends Component {
 
     const { hasChildren, isExpanded, data } = treeItem;
 
-    const { onScreenId, type, isNew, primaryText, isDisabled, iconSrc } = data;
+    const { onScreenId, type, isNew, primaryText, isDisabled, icon } = data;
 
     const isSelected = selectedComponentId === onScreenId;
 
@@ -260,7 +256,7 @@ class ComponentItem extends Component {
           ContainerComponent={'div'}
           button
         >
-          {this.renderListItemIcon(type, iconSrc, isNew, isSelected, classes)}
+          {this.renderListItemIcon(type, icon, isNew, isSelected, classes)}
           {this.renderListItemTextWrapper(primaryText, isSelected, classes)}
           <ListItemSecondaryAction>
             {this.renderContextMenu(isSelected)}

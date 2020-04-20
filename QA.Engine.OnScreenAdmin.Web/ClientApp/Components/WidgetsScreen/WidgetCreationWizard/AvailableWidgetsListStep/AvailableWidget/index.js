@@ -7,6 +7,8 @@ import {
   // ListItemSecondaryAction,
 } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
+import { Icon } from '@blueprintjs/core';
+import Widgets from 'material-ui-icons/Widgets';
 
 const styles = theme => ({
   listItem: {
@@ -36,12 +38,19 @@ class AvailableWidget extends Component {
     this.props.onSelectWidget(this.props.id);
   }
 
+  renderIcon = (iconClass, iconIntent, className) => ((iconClass)
+    ? iconIntent
+      ? (<Avatar className={className}><Icon icon={iconClass} intent={iconIntent} /></Avatar>)
+      : (<Avatar className={className}><Icon icon={iconClass} /></Avatar>)
+    : (<Avatar className={className}><Widgets /></Avatar>))
+
   render() {
     const {
       title,
       description,
-      iconUrl,
       classes,
+      iconClass,
+      iconIntent,
     } = this.props;
 
     return (
@@ -52,7 +61,7 @@ class AvailableWidget extends Component {
         button
         onClick={this.handleSelectClick}
       >
-        <Avatar src={iconUrl} className={classes.componentAvatar} />
+        {this.renderIcon(iconClass, iconIntent, classes.componentAvatar)}
         <ListItemText
           primary={title}
           secondary={description}
@@ -69,13 +78,18 @@ AvailableWidget.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
-  iconUrl: PropTypes.string.isRequired,
+  iconUrl: PropTypes.string,
+  iconClass: PropTypes.string,
+  iconIntent: PropTypes.string,
   classes: PropTypes.object.isRequired,
   onSelectWidget: PropTypes.func.isRequired,
 };
 
 AvailableWidget.defaultProps = {
   description: '',
+  iconUrl: null,
+  iconClass: null,
+  iconIntent: null,
 };
 
 export default withStyles(styles)(AvailableWidget);
