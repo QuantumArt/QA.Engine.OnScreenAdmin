@@ -19,6 +19,9 @@ import { MAX_COMPONENT_PRIMARY_TEXT_LENGTH } from 'constants/general';
 import { ELEMENT_TYPE } from 'constants/elementTypes';
 import { Icon } from '@blueprintjs/core';
 
+import '@blueprintjs/core/lib/css/blueprint.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+
 
 const styles = theme => ({
   componentAvatar: {

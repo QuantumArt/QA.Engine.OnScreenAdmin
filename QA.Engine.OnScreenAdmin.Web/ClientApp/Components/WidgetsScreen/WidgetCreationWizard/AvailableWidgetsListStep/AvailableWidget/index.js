@@ -10,6 +10,10 @@ import Avatar from 'material-ui/Avatar';
 import { Icon } from '@blueprintjs/core';
 import Widgets from 'material-ui-icons/Widgets';
 
+import '@blueprintjs/core/lib/css/blueprint.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+
+
 const styles = theme => ({
   listItem: {
     height: theme.spacing.unit * 7.5,
