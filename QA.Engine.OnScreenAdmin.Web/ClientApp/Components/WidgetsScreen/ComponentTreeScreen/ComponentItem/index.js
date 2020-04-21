@@ -57,7 +57,10 @@ const styles = theme => ({
   },
   componentAvatarBlueprintSelected: {
     borderRadius: 0,
+
     color: deepPurple[500],
+    width: theme.typography.pxToRem(35),
+    height: theme.typography.pxToRem(60),
     fontWeight: 'bold',
 
     backgroundColor: 'white',
