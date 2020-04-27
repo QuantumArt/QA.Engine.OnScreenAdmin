@@ -95,13 +95,6 @@ class ComponentControlMenu extends Component {
           >
             Add widget
           </MenuItem>
-          <MenuItem
-            key="anotherZoneAction"
-            onClick={this.handleRequestClose}
-            classes={{ root: classes.menuItem }}
-          >
-            Another zone action
-          </MenuItem>
         </Menu>
       </Fragment>
     );
