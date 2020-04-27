@@ -20,10 +20,11 @@ const getParentAbstractItemIdSelector = (state) => {
   const creationMode = state.widgetCreation.creationMode;
   const parentOnScreenId = state.widgetCreation.parentOnScreenId;
 
+
   if (!targetZoneName) { return null; }
   if (creationMode === WIDGET_CREATION_MODE.PAGE_CHILD) {
     if (isCustomZone) { return window.currentPageId; }
-    const targetZone = _.find(getFlatComponentsSelector(state), c => c.parentOnScreenId === 'page' && c.properties.zoneName === targetZoneName);
+    const targetZone = _.find(getFlatComponentsSelector(state), c => c.parentOnScreenId === null && c.properties.zoneName === targetZoneName);
     return targetZone.properties.parentAbstractItemId;
   }
   const component = _.find(getFlatComponentsSelector(state), { onScreenId: parentOnScreenId });
