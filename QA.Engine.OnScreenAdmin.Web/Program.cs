@@ -11,17 +11,23 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
     {
         public static void Main(string[] args)
         {
+            NLog.LogManager.LoadConfiguration("nlog.config");
             BuildWebHost(args).Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .ConfigureLogging(logging =>
+                .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.ClearProviders();
                     logging.SetMinimumLevel(LogLevel.Trace);
-                    logging.AddConsole();
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    if (hostingContext.HostingEnvironment.IsDevelopment())
+                    {
+                        logging.AddConsole();
+                        logging.AddDebug();
+                    }
                 })
                 .UseNLog()  // NLog: setup NLog for Dependency injection
                 .ConfigureAppConfiguration((hostingContext, config) =>

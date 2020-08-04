@@ -36,6 +36,8 @@ namespace QA.DotNetCore.OnScreenAdmin.Web.Auth
             try
             {
                 var authToken = _authenticationService.Authenticate(new Guid(accessToken), Options.Settings.ApplicationNameInQp);
+                authToken = authToken ?? _authenticationService.Authenticate(accessToken, Options.Settings.TokenLifeTime,
+                    Options.Settings.ApplicationNameInQp);
                 if (authToken == null)
                 {
                     return AuthenticateResult.NoResult();

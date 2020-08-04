@@ -38,21 +38,6 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="appsettings.Development.json">
-      <DependentUpon>appsettings.json</DependentUpon>
-    </Content>
-    <Content Update="appsettings.Release.json">
-      <DependentUpon>appsettings.json</DependentUpon>
-    </Content>
-    <Content Update="nlog.Development.config">
-      <DependentUpon>nlog.config</DependentUpon>
-    </Content>
-    <Content Update="nlog.Release.config">
-      <DependentUpon>nlog.config</DependentUpon>
-    </Content>
-  </ItemGroup>
-
   <Target Name="CheckNode" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
