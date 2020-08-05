@@ -72,8 +72,11 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                 }
 
                 var config = Configuration.GetSection("ConfigurationService").Get<ConfigurationServiceConfig>();
-                DBConnector.ConfigServiceUrl = config.Url;
-                DBConnector.ConfigServiceToken = config.Token;
+                if (!String.IsNullOrEmpty(config.Url) && !String.IsNullOrEmpty(config.Token))
+                {
+                    DBConnector.ConfigServiceUrl = config.Url;
+                    DBConnector.ConfigServiceToken = config.Token;
+                }
                 CustomerConfiguration dbConfig = DBConnector.GetCustomerConfiguration(customerCode.ToString()).Result;
                 return new UnitOfWork(dbConfig.ConnectionString, dbConfig.DbType.ToString());
             });
