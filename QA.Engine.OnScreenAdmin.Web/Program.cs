@@ -2,6 +2,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using NLog.Web;
 using Microsoft.Extensions.Logging;
 
