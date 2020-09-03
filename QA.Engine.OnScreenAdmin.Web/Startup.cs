@@ -144,6 +144,8 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
 
             app.UseAuthentication();
 
+            app.UseAuthorization();
+
             app.UseCacheTagsInvalidation(trackers => { trackers.Register<QpContentCacheTracker>(); });
 
             app.UseEndpoints(endpoints =>
