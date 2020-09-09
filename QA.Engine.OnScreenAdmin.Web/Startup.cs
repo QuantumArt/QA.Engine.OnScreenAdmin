@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using QA.DotNetCore.Caching;
@@ -19,6 +18,7 @@ using Quantumart.QPublishing.Authentication;
 using Quantumart.QPublishing.Database;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using QP.ConfigurationService.Models;
 
@@ -72,8 +72,11 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                 }
 
                 var config = Configuration.GetSection("ConfigurationService").Get<ConfigurationServiceConfig>();
-                DBConnector.ConfigServiceUrl = config.Url;
-                DBConnector.ConfigServiceToken = config.Token;
+                if (!String.IsNullOrEmpty(config.Url) && !String.IsNullOrEmpty(config.Token))
+                {
+                    DBConnector.ConfigServiceUrl = config.Url;
+                    DBConnector.ConfigServiceToken = config.Token;
+                }
                 CustomerConfiguration dbConfig = DBConnector.GetCustomerConfiguration(customerCode.ToString()).Result;
                 return new UnitOfWork(dbConfig.ConnectionString, dbConfig.DbType.ToString());
             });
@@ -110,21 +113,23 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                     @"^(?!\/api\/).+$")); //инвалидировать только если запрос начинается с /api/
 
             services.AddHealthChecks();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                    );
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-                {
-                    HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true,
-                    HotModuleReplacementEndpoint = "/__webpack_hmr"
-                });
-                app.UseBrowserLink();
             }
             else
             {
@@ -132,21 +137,22 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
             }
 
             app.UseStaticFiles();
-            app.UseCors(builder => builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+
+            app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
 
-            app.UseCacheTagsInvalidation(trackers => { trackers.RegisterScoped<QpContentCacheTracker>(); });
+            app.UseAuthorization();
 
-            app.UseMvc(routes =>
+            app.UseCacheTagsInvalidation(trackers => { trackers.Register<QpContentCacheTracker>(); });
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
             app.UseHealthChecks("/ready");

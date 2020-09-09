@@ -1,12 +1,8 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build-env
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
 LABEL stage=intermediate
 
-RUN apt-get update && \
-    apt-get install unzip && \
-    apt-get install -y wget && \
-    apt-get install -y gnupg2 && \
-    wget -qO- https://deb.nodesource.com/setup_8.x | bash - && \
-    apt-get install -y build-essential nodejs
+RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash - && \
+    apt-get install -y nodejs
 
 WORKDIR /src
 COPY ["QA.Engine.OnScreenAdmin.Web/QA.Engine.OnScreenAdmin.Web.csproj", "QA.Engine.OnScreenAdmin.Web/"]
@@ -25,7 +21,7 @@ WORKDIR /src/QA.Engine.OnScreenAdmin.Web
 RUN dotnet build "QA.Engine.OnScreenAdmin.Web.csproj" -c Release
 RUN dotnet publish "QA.Engine.OnScreenAdmin.Web.csproj" -c Release -o /app/out
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
 ARG SERVICE_VERSION=0.0.0
 ENV ServiceVersion=${SERVICE_VERSION}
 WORKDIR /app
