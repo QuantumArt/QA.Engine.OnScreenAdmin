@@ -14,7 +14,7 @@ spec:
         app: wp-onscreen
     spec:
       containers:
-      - image: spbdocker03:5000/widget-platform/onscreen:||version||
+      - image: "||registry||/widget-platform/onscreen:||version||"
         name: wp-onscreen
         ports:
         - containerPort: 80
@@ -64,7 +64,7 @@ metadata:
   namespace: widget-platform
 spec:
   rules:
-  - host: onscreen.widget-platform.dev.qsupport.ru
+  - host: "||host||"
     http:
       paths:
       - backend:
