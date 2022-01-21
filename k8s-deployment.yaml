@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: wp-onscreen
+        logging: enabled
     spec:
       containers:
       - image: "||registry||/widget-platform/onscreen:||version||"
