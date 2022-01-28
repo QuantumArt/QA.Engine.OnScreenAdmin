@@ -110,6 +110,24 @@ const constructElement = (type, val, onScreenId, parentOnScreenId, nestLevel) =>
   properties: mapProperties(val),
 });
 
+const wrap = (elem, wrapper) => {
+  if (elem && elem.parentNode) {
+    elem.parentNode.insertBefore(wrapper, elem);
+    wrapper.appendChild(elem);
+  }
+};
+
+const unwrap = (elem) => {
+  if (elem && elem.parentNode) {
+    // move all children out of the element
+    while (elem.firstChild) {
+      elem.parentNode.insertBefore(elem.firstChild, elem);
+    }
+    // remove the empty element
+    elem.remove();
+  }
+};
+
 function getCords(node, el) {
   let widgetNesting = 0;
   let zoneNesting = 0;
@@ -184,13 +202,18 @@ function getCords(node, el) {
 
   // if first node is text, create a div-wrap
   if (firstSubElem && firstSubElem.nodeType === Node.TEXT_NODE) {
-    const clonedText = firstSubElem.textContent;
     const tempWrap = document.createElement('div');
-    tempWrap.style.visibility = 'hidden';
-    tempWrap.style.display = 'inline-block';
-    tempWrap.appendChild(firstSubElem.cloneNode(true));
-    node.parentNode.insertBefore(tempWrap, firstSubElem);
-    firstSubElem.textContent = '';
+    // tempWrap.style.visibility = 'hidden';
+    // tempWrap.style.display = 'inline-block';
+    wrap(firstSubElem, tempWrap);
+
+    // const clonedText = firstSubElem.textContent;
+    // const tempWrap = document.createElement('div');
+    // tempWrap.style.visibility = 'hidden';
+    // tempWrap.style.display = 'inline-block';
+    // tempWrap.appendChild(firstSubElem.cloneNode(true));
+    // node.parentNode.insertBefore(tempWrap, firstSubElem);
+    // firstSubElem.textContent = '';
     componentCoords.top = tempWrap.getBoundingClientRect().top + pageYOffset;
     componentCoords.left = tempWrap.getBoundingClientRect().left + pageXOffset;
 
@@ -198,8 +221,9 @@ function getCords(node, el) {
       componentCoords.width = tempWrap.offsetWidth;
       componentCoords.height = tempWrap.offsetHeight;
     }
-    node.parentNode.removeChild(tempWrap);
-    firstSubElem.textContent = clonedText;
+    // node.parentNode.removeChild(tempWrap);
+    // firstSubElem.textContent = clonedText;
+    unwrap(firstSubElem);
   } else if (firstSubElem) {
     componentCoords.top = firstSubElem.getBoundingClientRect().top + pageYOffset;
     componentCoords.left = firstSubElem.getBoundingClientRect().left + pageXOffset;
@@ -211,21 +235,29 @@ function getCords(node, el) {
 
   if (lastSubElem && ((lastSubElem.nodeType === Node.TEXT_NODE && firstSubElem !== lastSubElem) ||
     !lastSubElem.offsetHeight)) {
-    const clonedText = lastSubElem.textContent;
     const tempWrapLast = document.createElement('div');
-    tempWrapLast.style.visibility = 'hidden';
-    tempWrapLast.style.display = 'inline-block';
-    tempWrapLast.appendChild(lastSubElem.cloneNode(true));
-    node.parentNode.insertBefore(tempWrapLast, lastSubElem.nextSibling);
-    lastSubElem.textContent = '';
+    // tempWrapLast.style.visibility = 'hidden';
+    // tempWrapLast.style.display = 'inline-block';
+
+    wrap(lastSubElem, tempWrapLast);
+
+    // const clonedText = lastSubElem.textContent;
+    // const tempWrapLast = document.createElement('div');
+    // tempWrapLast.style.visibility = 'hidden';
+    // tempWrapLast.style.display = 'inline-block';
+    // tempWrapLast.appendChild(lastSubElem.cloneNode(true));
+    // node.parentNode.insertBefore(tempWrapLast, lastSubElem.nextSibling);
+    // lastSubElem.textContent = '';
     if (tempWrapLast.getBoundingClientRect().left > coordsRigtht) {
       coordsRigtht = tempWrapLast.getBoundingClientRect().left + tempWrapLast.offsetWidth;
     }
     componentCoords.width = coordsRigtht - componentCoords.left; // Width
     componentCoords.height = ((tempWrapLast.getBoundingClientRect().top + pageYOffset) - componentCoords.top)
       + tempWrapLast.offsetHeight; // Height
-    node.parentNode.removeChild(tempWrapLast);
-    lastSubElem.textContent = clonedText;
+
+    unwrap(lastSubElem);
+    // node.parentNode.removeChild(tempWrapLast);
+    // lastSubElem.textContent = clonedText;
   } else if (lastSubElem && firstSubElem !== lastSubElem) {
     if (lastSubElem.getBoundingClientRect().left + lastSubElem.offsetWidth > coordsRigtht) {
       coordsRigtht = lastSubElem.getBoundingClientRect().left + lastSubElem.offsetWidth;
