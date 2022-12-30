@@ -108,9 +108,9 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                     new[] {QpAuthDefaults.AuthenticationScheme});
             });
 
-            services.AddCacheTagServices(options =>
-                options.InvalidateByMiddleware(
-                    @"^(?!\/api\/).+$")); //инвалидировать только если запрос начинается с /api/
+            services.AddCacheTagServices()
+                .WithInvalidationByMiddleware(@"^(?!\/api\/).+$") //инвалидировать только если запрос начинается с /api/
+                .WithCacheTrackers(trackers => { trackers.Register<QpContentCacheTracker>(); });
 
             services.AddHealthChecks();
 
@@ -146,7 +146,7 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
 
             app.UseAuthorization();
 
-            app.UseCacheTagsInvalidation(trackers => { trackers.Register<QpContentCacheTracker>(); });
+            app.UseCacheTagsInvalidation();
 
             app.UseEndpoints(endpoints =>
             {
