@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using QA.DotNetCore.Caching.Configuration;
+using QA.DotNetCore.Engine.Persistent.Configuration;
 using QP.ConfigurationService.Models;
 
 namespace QA.DotNetCore.OnScreenAdmin.Web
@@ -52,8 +54,7 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                 var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
                 o.IncludeXmlComments(xmlPath);
             });
-            services.AddMemoryCache();
-            services.AddSingleton<ICacheProvider, VersionedCacheCoreProvider>();
+            services.TryAddSiteStructureRepositories();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddScoped(sp =>
@@ -80,9 +81,6 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                 CustomerConfiguration dbConfig = DBConnector.GetCustomerConfiguration(customerCode.ToString()).Result;
                 return new UnitOfWork(dbConfig.ConnectionString, dbConfig.DbType.ToString());
             });
-            services.AddScoped<IMetaInfoRepository, MetaInfoRepository>();
-            services.AddScoped<INetNameQueryAnalyzer, NetNameQueryAnalyzer>();
-            services.AddScoped<IItemDefinitionRepository, ItemDefinitionRepository>();
             services.AddScoped<IAbTestRepository, AbTestRepository>();
 
             var qpUrlResolverCacheSettings = new QpSiteStructureCacheSettings
@@ -108,9 +106,9 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
                     new[] {QpAuthDefaults.AuthenticationScheme});
             });
 
-            services.AddCacheTagServices(options =>
-                options.InvalidateByMiddleware(
-                    @"^(?!\/api\/).+$")); //инвалидировать только если запрос начинается с /api/
+            services.AddCacheTagServices()
+                .WithInvalidationByMiddleware(@"^(?!\/api\/).+$") //инвалидировать только если запрос начинается с /api/
+                .WithCacheTrackers(trackers => { trackers.Register<QpContentCacheTracker>(); });
 
             services.AddHealthChecks();
 
@@ -146,7 +144,7 @@ namespace QA.DotNetCore.OnScreenAdmin.Web
 
             app.UseAuthorization();
 
-            app.UseCacheTagsInvalidation(trackers => { trackers.Register<QpContentCacheTracker>(); });
+            app.UseCacheTagsInvalidation();
 
             app.UseEndpoints(endpoints =>
             {
