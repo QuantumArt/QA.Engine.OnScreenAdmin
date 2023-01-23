@@ -68,7 +68,7 @@ spec:
   selector:
     app: wp-onscreen
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
@@ -81,6 +81,10 @@ spec:
   - host: "||host||"
     http:
       paths:
-      - backend:
-          serviceName: wp-onscreen
-          servicePort: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wp-onscreen
+            port:
+              number: 80      
