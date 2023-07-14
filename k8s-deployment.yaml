@@ -15,7 +15,7 @@ spec:
         logging: enabled
     spec:
       containers:
-      - image: "||registry||/widget-platform/onscreen:||version||"
+      - image: "||registry||/qp8-widgets/onscreen:||version||"
         name: wp-onscreen
         ports:
         - containerPort: 80
