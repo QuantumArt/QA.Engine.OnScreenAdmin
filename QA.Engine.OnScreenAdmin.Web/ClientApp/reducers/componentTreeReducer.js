@@ -8,7 +8,7 @@ import {
 } from '../actions/componentTree/actionTypes';
 
 
-const getMaxNestLevel = comps => comps.map(c => c.nestLevel).reduce((max, cur) => Math.max(max, cur));
+const getMaxNestLevel = comps => comps.map(c => c.nestLevel).reduce((max, cur) => Math.max(max, cur), Number.MIN_VALUE);
 
 const initialState = {
   selectedComponentId: '',
